@@ -18,6 +18,50 @@
   }
   body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 1.5rem 1rem; }
   .app { width: 100%; max-width: 400px; }
+
+  /* ── 프로필 선택 화면 ── */
+  .profile-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; }
+  .profile-title { font-family: var(--serif); font-size: 28px; color: var(--text); margin-bottom: 0.5rem; text-align: center; }
+  .profile-sub { font-size: 13px; color: var(--muted); margin-bottom: 3rem; text-align: center; }
+  .profile-cards { display: flex; gap: 1.5rem; justify-content: center; }
+  .profile-card { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; cursor: pointer; transition: transform 0.2s; }
+  .profile-card:hover { transform: translateY(-4px); }
+  .profile-avatar { width: 96px; height: 96px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 32px; font-style: italic; border: 2.5px solid transparent; transition: border-color 0.2s; }
+  .profile-avatar.dasol { background: var(--red-light); color: var(--red); }
+  .profile-avatar.jimmy { background: var(--mint-light); color: var(--mint); }
+  .profile-card:hover .profile-avatar.dasol { border-color: var(--red); }
+  .profile-card:hover .profile-avatar.jimmy { border-color: var(--mint); }
+  .profile-name { font-size: 15px; font-weight: 500; color: var(--text); }
+  .profile-pin-wrap { margin-top: 0.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+  .profile-pin-label { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; }
+  .pin-dots { display: flex; gap: 8px; }
+  .pin-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background 0.15s; }
+  .pin-dot.filled.dasol { background: var(--red); }
+  .pin-dot.filled.jimmy { background: var(--mint); }
+  .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 180px; margin-top: 0.5rem; }
+  .pin-key { height: 44px; border: 0.5px solid var(--border); border-radius: 10px; background: var(--surface); font-family: var(--sans); font-size: 16px; font-weight: 500; color: var(--text); cursor: pointer; transition: background 0.15s; }
+  .pin-key:hover { background: var(--surface2); }
+  .pin-key.del { font-size: 13px; color: var(--muted); }
+  .pin-error { font-size: 11px; color: var(--red); margin-top: 0.25rem; min-height: 16px; }
+  .pin-section { display: none; flex-direction: column; align-items: center; margin-top: 1rem; }
+  .pin-section.visible { display: flex; }
+
+  /* ── 메인 앱 ── */
+  .main-screen { display: none; }
+  .main-screen.visible { display: block; }
+
+  /* 상단 프로필 바 */
+  .profile-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+  .profile-bar-left { display: flex; align-items: center; gap: 10px; }
+  .profile-bar-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--serif); font-size: 14px; font-style: italic; }
+  .profile-bar-avatar.dasol { background: var(--red-light); color: var(--red); }
+  .profile-bar-avatar.jimmy { background: var(--mint-light); color: var(--mint); }
+  .profile-bar-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .profile-bar-sub { font-size: 10px; color: var(--muted); }
+  .logout-btn { font-family: var(--sans); font-size: 11px; color: var(--muted); background: none; border: 0.5px solid var(--border); border-radius: 8px; padding: 5px 10px; cursor: pointer; transition: background 0.15s; }
+  .logout-btn:hover { background: var(--surface2); }
+
+  /* 나머지 스타일 */
   .header { text-align: center; margin-bottom: 1.25rem; }
   .app-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
   .couple-line { font-family: var(--serif); font-size: 22px; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -49,7 +93,7 @@
   .cal-nav:hover { background: var(--surface2); }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
   .cal-dow { font-size: 10px; color: var(--muted); text-align: center; padding-bottom: 5px; }
-  .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; cursor: pointer; transition: background 0.15s; user-select: none; gap: 1px; position: relative; }
+  .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; cursor: pointer; transition: background 0.15s; user-select: none; gap: 1px; }
   .cal-day:hover { background: var(--surface2); }
   .cal-day.empty { cursor: default; } .cal-day.empty:hover { background: none; }
   .cal-day.today { font-weight: 500; color: var(--red); }
@@ -58,29 +102,23 @@
   .cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--red); }
   .cal-dot.mint { background: var(--mint); }
   .cal-emoji { font-size: 10px; line-height: 1; }
-
-  /* 날짜 상세 뷰 */
   .day-detail { background: var(--surface); border: 0.5px solid var(--border); border-radius: 16px; margin-bottom: 1rem; overflow: hidden; }
   .day-detail-header { padding: 0.875rem 1rem 0.6rem; border-bottom: 0.5px solid var(--border); }
   .day-detail-date { font-family: var(--serif); font-size: 15px; color: var(--text); }
   .author-entries { display: flex; flex-direction: column; }
-  .author-entry { padding: 0.875rem 1rem; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.15s; }
+  .author-entry { padding: 0.875rem 1rem; border-bottom: 0.5px solid var(--border); transition: background 0.15s; }
   .author-entry:last-child { border-bottom: none; }
-  .author-entry:hover { background: var(--surface2); }
+  .author-entry.clickable { cursor: pointer; }
+  .author-entry.clickable:hover { background: var(--surface2); }
   .author-entry-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem; }
   .author-name { font-size: 12px; font-weight: 500; }
   .author-name.dasol { color: var(--red); }
   .author-name.jimmy { color: var(--mint); }
-  .author-emoji { font-size: 14px; }
   .author-entry-text { font-size: 13px; color: var(--text); line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
   .author-entry-empty { font-size: 12px; color: var(--muted); font-style: italic; }
-  .author-add-btn { font-size: 12px; color: var(--red); background: none; border: none; cursor: pointer; padding: 0; }
-
   .entry-list { margin-bottom: 1.5rem; }
   .no-entries { text-align: center; font-size: 12px; color: var(--muted); padding: 1.25rem 0; }
   .loading { text-align: center; font-size: 12px; color: var(--muted); padding: 1rem 0; }
-
-  /* 모달 */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,36,32,0.45); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border-radius: 20px; padding: 1.5rem; width: 100%; max-width: 360px; max-height: 88vh; overflow-y: auto; }
@@ -95,7 +133,7 @@
   .emoji-btn.none-btn { font-size: 11px; color: var(--muted); width: auto; padding: 0 10px; }
   textarea { width: 100%; font-family: var(--sans); font-size: 14px; padding: 10px 12px; border: 0.5px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); resize: none; outline: none; transition: border-color 0.2s; line-height: 1.6; }
   textarea:focus { border-color: var(--red); }
-  .modal-author-badge { display: inline-block; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 0.25rem; }
+  .modal-author-badge { display: inline-block; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 0.75rem; }
   .modal-author-badge.dasol { background: var(--red-light); color: var(--red); }
   .modal-author-badge.jimmy { background: var(--mint-light); color: var(--mint); }
   .modal-btn-row { display: flex; gap: 8px; margin-top: 1rem; }
@@ -112,46 +150,104 @@
 </head>
 <body>
 <div class="app">
-  <div class="header">
-    <div class="app-label">our time</div>
-    <div class="couple-line">
-      <span>Dasol</span><span class="heart-icon">♥</span><span>Jimmy</span>
-    </div>
-  </div>
-  <div class="dday-row">
-    <div class="dday-card">
-      <div class="dday-card-label">함께한 시간</div>
-      <div style="display:flex;align-items:baseline;gap:3px;">
-        <span class="dday-card-prefix">D+</span>
-        <span class="dday-card-num" id="dday">0</span>
+
+  <!-- 프로필 선택 화면 -->
+  <div class="profile-screen" id="profile-screen">
+    <div class="profile-title">Our Time</div>
+    <div class="profile-sub">누구로 입장할까요?</div>
+    <div class="profile-cards">
+      <div class="profile-card" id="card-dasol" onclick="selectProfile('Dasol')">
+        <div class="profile-avatar dasol">D</div>
+        <div class="profile-name">Dasol</div>
+      </div>
+      <div class="profile-card" id="card-jimmy" onclick="selectProfile('Jimmy')">
+        <div class="profile-avatar jimmy">J</div>
+        <div class="profile-name">Jimmy</div>
       </div>
     </div>
-    <div class="dday-today">
-      <div class="dday-today-label">오늘</div>
-      <div class="dday-today-val" id="today-label">—</div>
+    <div class="pin-section" id="pin-section">
+      <div class="profile-pin-wrap">
+        <div class="profile-pin-label" id="pin-label">비밀번호 입력</div>
+        <div class="pin-dots" id="pin-dots">
+          <div class="pin-dot" id="pd0"></div>
+          <div class="pin-dot" id="pd1"></div>
+          <div class="pin-dot" id="pd2"></div>
+          <div class="pin-dot" id="pd3"></div>
+        </div>
+        <div class="pin-error" id="pin-error"></div>
+        <div class="pin-pad">
+          <button class="pin-key" onclick="pinInput('1')">1</button>
+          <button class="pin-key" onclick="pinInput('2')">2</button>
+          <button class="pin-key" onclick="pinInput('3')">3</button>
+          <button class="pin-key" onclick="pinInput('4')">4</button>
+          <button class="pin-key" onclick="pinInput('5')">5</button>
+          <button class="pin-key" onclick="pinInput('6')">6</button>
+          <button class="pin-key" onclick="pinInput('7')">7</button>
+          <button class="pin-key" onclick="pinInput('8')">8</button>
+          <button class="pin-key" onclick="pinInput('9')">9</button>
+          <button class="pin-key" onclick="pinCancel()">취소</button>
+          <button class="pin-key" onclick="pinInput('0')">0</button>
+          <button class="pin-key del" onclick="pinDelete()">⌫</button>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="breakdown-row">
-    <div class="bd-card y"><div class="bd-num" id="years">0</div><div class="bd-label">년</div></div>
-    <div class="bd-card m"><div class="bd-num" id="months">0</div><div class="bd-label">개월</div></div>
-    <div class="bd-card d"><div class="bd-num" id="days-rem">0</div><div class="bd-label">일</div></div>
-  </div>
-  <div class="milestone-card">
-    <span class="milestone-left">다음 기념일까지</span>
-    <span class="milestone-right" id="next-milestone">—</span>
-  </div>
-  <div class="divider"></div>
-  <div class="calendar-wrap">
-    <div class="section-label">데이트 기록</div>
-    <div class="cal-header">
-      <button class="cal-nav" id="prev-btn">&#8592;</button>
-      <div class="cal-title" id="cal-title"></div>
-      <button class="cal-nav" id="next-btn">&#8594;</button>
+
+  <!-- 메인 앱 화면 -->
+  <div class="main-screen" id="main-screen">
+    <div class="profile-bar">
+      <div class="profile-bar-left">
+        <div class="profile-bar-avatar" id="bar-avatar"></div>
+        <div>
+          <div class="profile-bar-name" id="bar-name"></div>
+          <div class="profile-bar-sub">로그인됨</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">로그아웃</button>
     </div>
-    <div class="cal-grid" id="cal-grid"></div>
+
+    <div class="header">
+      <div class="app-label">our time</div>
+      <div class="couple-line">
+        <span>Dasol</span><span class="heart-icon">♥</span><span>Jimmy</span>
+      </div>
+    </div>
+
+    <div class="dday-row">
+      <div class="dday-card">
+        <div class="dday-card-label">함께한 시간</div>
+        <div style="display:flex;align-items:baseline;gap:3px;">
+          <span class="dday-card-prefix">D+</span>
+          <span class="dday-card-num" id="dday">0</span>
+        </div>
+      </div>
+      <div class="dday-today">
+        <div class="dday-today-label">오늘</div>
+        <div class="dday-today-val" id="today-label">—</div>
+      </div>
+    </div>
+    <div class="breakdown-row">
+      <div class="bd-card y"><div class="bd-num" id="years">0</div><div class="bd-label">년</div></div>
+      <div class="bd-card m"><div class="bd-num" id="months">0</div><div class="bd-label">개월</div></div>
+      <div class="bd-card d"><div class="bd-num" id="days-rem">0</div><div class="bd-label">일</div></div>
+    </div>
+    <div class="milestone-card">
+      <span class="milestone-left">다음 기념일까지</span>
+      <span class="milestone-right" id="next-milestone">—</span>
+    </div>
+    <div class="divider"></div>
+    <div class="calendar-wrap">
+      <div class="section-label">데이트 기록</div>
+      <div class="cal-header">
+        <button class="cal-nav" id="prev-btn">&#8592;</button>
+        <div class="cal-title" id="cal-title"></div>
+        <button class="cal-nav" id="next-btn">&#8594;</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+    <div class="entry-list" id="entry-list"></div>
+    <div class="footer">made with ♥</div>
   </div>
-  <div class="entry-list" id="entry-list"></div>
-  <div class="footer">made with ♥</div>
 </div>
 
 <!-- 작성 모달 -->
@@ -159,7 +255,7 @@
   <div class="modal">
     <div class="modal-title" id="modal-title">기록 쓰기</div>
     <div class="modal-date-label" id="modal-date-label"></div>
-    <div id="modal-author-badge-wrap" style="margin-bottom:0.75rem;"></div>
+    <div id="modal-author-badge-wrap"></div>
     <div class="modal-section">
       <div class="modal-label">이모티콘</div>
       <div class="emoji-grid" id="emoji-grid"></div>
@@ -195,17 +291,106 @@
   const START_DATE = '2026-01-16';
   const EMOJIS = ['🥰','😍','😊','🥳','😂','😭','🫶','💕','🌸','🍀','☀️','🌙','🎉','🍽️','🎬','☕','🚗','✈️','🏖️','🎁'];
   const DAYS_KO = ['일','월','화','수','목','금','토'];
-  // Firestore key: entries/{dateKey_author} e.g. "2026-05-31_Dasol"
+  // 비밀번호 설정 (4자리)
+  const PINS = { Dasol: '0419', Jimmy: '0328' };
 
   let calYear = new Date().getFullYear();
   let calMonth = new Date().getMonth();
-  let cachedEntries = {}; // key: "YYYY-MM-DD_Author"
+  let cachedEntries = {};
   let currentDateKey = null;
   let currentAuthor = null;
   let selectedEmoji = null;
+  let loggedInUser = null;
 
+  // ── PIN ──
+  let pinTarget = null;
+  let pinValue = '';
+
+  window.selectProfile = function(name) {
+    pinTarget = name;
+    pinValue = '';
+    updatePinDots();
+    document.getElementById('pin-label').textContent = name + '의 비밀번호 입력';
+    document.getElementById('pin-error').textContent = '';
+    document.querySelectorAll('.pin-dot').forEach(d => {
+      d.className = 'pin-dot';
+    });
+    document.getElementById('pin-section').classList.add('visible');
+  }
+
+  window.pinInput = function(n) {
+    if(pinValue.length >= 4) return;
+    pinValue += n;
+    updatePinDots();
+    if(pinValue.length === 4) {
+      setTimeout(() => checkPin(), 150);
+    }
+  }
+
+  window.pinDelete = function() {
+    pinValue = pinValue.slice(0,-1);
+    updatePinDots();
+  }
+
+  window.pinCancel = function() {
+    pinValue = '';
+    pinTarget = null;
+    document.getElementById('pin-section').classList.remove('visible');
+    document.getElementById('pin-error').textContent = '';
+  }
+
+  function updatePinDots() {
+    for(let i=0;i<4;i++){
+      const dot = document.getElementById('pd'+i);
+      dot.className = 'pin-dot' + (i < pinValue.length ? ' filled '+(pinTarget||'dasol').toLowerCase() : '');
+    }
+  }
+
+  function checkPin() {
+    if(pinValue === PINS[pinTarget]) {
+      loggedInUser = pinTarget;
+      sessionStorage.setItem('ourtime_user', pinTarget);
+      enterApp();
+    } else {
+      document.getElementById('pin-error').textContent = '비밀번호가 틀렸어요';
+      pinValue = '';
+      updatePinDots();
+    }
+  }
+
+  window.logout = function() {
+    loggedInUser = null;
+    sessionStorage.removeItem('ourtime_user');
+    document.getElementById('main-screen').classList.remove('visible');
+    document.getElementById('profile-screen').style.display = 'flex';
+    document.getElementById('pin-section').classList.remove('visible');
+    pinValue = ''; pinTarget = null;
+  }
+
+  function enterApp() {
+    document.getElementById('profile-screen').style.display = 'none';
+    document.getElementById('main-screen').classList.add('visible');
+    // 프로필 바 설정
+    const avatar = document.getElementById('bar-avatar');
+    avatar.textContent = loggedInUser[0];
+    avatar.className = 'profile-bar-avatar ' + loggedInUser.toLowerCase();
+    document.getElementById('bar-name').textContent = loggedInUser;
+    updateDisplay();
+    document.getElementById('entry-list').innerHTML = '<div class="loading">불러오는 중...</div>';
+    loadEntries().then(renderCalendar);
+  }
+
+  // ── 세션 복원 ──
+  const savedUser = sessionStorage.getItem('ourtime_user');
+  if(savedUser && (savedUser === 'Dasol' || savedUser === 'Jimmy')) {
+    loggedInUser = savedUser;
+    enterApp();
+  }
+
+  // ── 토스트 ──
   function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
+  // ── D+day ──
   function updateDisplay(){
     const s=new Date(START_DATE);s.setHours(0,0,0,0);
     const now=new Date();now.setHours(0,0,0,0);
@@ -233,9 +418,7 @@
     cachedEntries={};
     const snap=await getDocs(collection(db,'entries'));
     snap.forEach(d=>{
-      const id=d.id;
-      const data=d.data();
-      // 구형 key "2026-05-04" → 작성자 필드 기준으로 새 형식으로 읽기
+      const id=d.id, data=d.data();
       if(!id.includes('_')){
         const newKey=id+'_'+(data.author||'Dasol');
         if(!cachedEntries[newKey]) cachedEntries[newKey]=data;
@@ -268,11 +451,9 @@
       const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
       const el=document.createElement('div');
       el.className='cal-day'+(hasAny?' has-date':'')+(isToday?' today':'');
-
       let indicators='';
-      if(de){indicators+=(de.emoji?'<span class="cal-emoji">'+de.emoji+'</span>':'<span class="cal-dot"></span>');}
-      if(je){indicators+=(je.emoji?'<span class="cal-emoji">'+je.emoji+'</span>':'<span class="cal-dot mint"></span>');}
-
+      if(de) indicators+=(de.emoji?'<span class="cal-emoji">'+de.emoji+'</span>':'<span class="cal-dot"></span>');
+      if(je) indicators+=(je.emoji?'<span class="cal-emoji">'+je.emoji+'</span>':'<span class="cal-dot mint"></span>');
       el.innerHTML='<span>'+d+'</span><div class="cal-indicators">'+indicators+'</div>';
       el.onclick=()=>openDayView(calYear,calMonth,d);
       grid.appendChild(el);
@@ -284,58 +465,55 @@
     const list=document.getElementById('entry-list');
     const prefix=calYear+'-'+String(calMonth+1).padStart(2,'0');
     const dayKeys=[...new Set(
-      Object.keys(cachedEntries)
-        .filter(k=>k.startsWith(prefix))
-        .map(k=>k.split('_')[0])
+      Object.keys(cachedEntries).filter(k=>k.startsWith(prefix)).map(k=>k.split('_')[0])
     )].sort().reverse();
-
     if(dayKeys.length===0){list.innerHTML='<div class="no-entries">이번 달 데이트 기록이 없어요</div>';return;}
-
     list.innerHTML=dayKeys.map(dk=>{
       const {Dasol:de,Jimmy:je}=getDateEntries(dk);
-      const [,m,d]=dk.split('-');
+      const[,m,d]=dk.split('-');
       const dow=getDow(dk);
-      const dasolHtml=`<div class="author-entry" data-dk="${dk}" data-author="Dasol">
+      // 본인 기록만 클릭 가능
+      const dasolClickable = loggedInUser==='Dasol';
+      const jimmyClickable = loggedInUser==='Jimmy';
+      const dasolHtml=`<div class="author-entry${dasolClickable?' clickable':''}" data-dk="${dk}" data-author="Dasol">
         <div class="author-entry-top">
           <span class="author-name dasol">Dasol ${de?.emoji||''}</span>
+          ${dasolClickable?'<span style="font-size:11px;color:var(--muted);">'+(de?'수정':'+ 쓰기')+'</span>':''}
         </div>
         ${de?.text?`<div class="author-entry-text">${de.text.substring(0,80)}${de.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
       </div>`;
-      const jimmyHtml=`<div class="author-entry" data-dk="${dk}" data-author="Jimmy">
+      const jimmyHtml=`<div class="author-entry${jimmyClickable?' clickable':''}" data-dk="${dk}" data-author="Jimmy">
         <div class="author-entry-top">
           <span class="author-name jimmy">Jimmy ${je?.emoji||''}</span>
+          ${jimmyClickable?'<span style="font-size:11px;color:var(--muted);">'+(je?'수정':'+ 쓰기')+'</span>':''}
         </div>
         ${je?.text?`<div class="author-entry-text">${je.text.substring(0,80)}${je.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
       </div>`;
       return `<div class="day-detail">
-        <div class="day-detail-header">
-          <div class="day-detail-date">${parseInt(m)}월 ${parseInt(d)}일 (${dow})</div>
-        </div>
+        <div class="day-detail-header"><div class="day-detail-date">${parseInt(m)}월 ${parseInt(d)}일 (${dow})</div></div>
         <div class="author-entries">${dasolHtml}${jimmyHtml}</div>
       </div>`;
     }).join('');
-
-    list.querySelectorAll('.author-entry').forEach(el=>{
+    // 본인 기록만 클릭 이벤트
+    list.querySelectorAll('.author-entry.clickable').forEach(el=>{
       el.onclick=()=>openModal(el.dataset.dk, el.dataset.author);
     });
   }
 
   function openDayView(y,m,d){
-    // 달력 클릭 시 해당 날짜로 스크롤 or 목록에서 찾아서 열기
     const dk=dateKey(y,m,d);
     const {Dasol:de,Jimmy:je}=getDateEntries(dk);
-    // 둘 다 없으면 Dasol 모달 바로 열기, 있으면 목록 스크롤
     if(!de&&!je){
-      openModal(dk,'Dasol');
+      openModal(dk, loggedInUser);
     } else {
-      const el=document.querySelector(`.author-entry[data-dk="${dk}"]`);
+      const el=document.querySelector(`.author-entry[data-dk="${dk}"][data-author="${loggedInUser}"]`);
       if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
     }
   }
 
   function openModal(dk, author){
-    currentDateKey=dk;
-    currentAuthor=author;
+    if(author !== loggedInUser) return; // 본인 기록만
+    currentDateKey=dk; currentAuthor=author;
     const ek=entryKey(dk,author);
     const entry=cachedEntries[ek]||{};
     const[ky,km,kd]=dk.split('-');
@@ -375,7 +553,7 @@
   }
 
   async function saveEntry(){
-    if(!currentDateKey||!currentAuthor)return;
+    if(!currentDateKey||!currentAuthor) return;
     const text=document.getElementById('modal-text').value.trim();
     if(!text&&!selectedEmoji){closeModal();return;}
     showToast('저장 중...');
@@ -383,19 +561,17 @@
     const data={text,author:currentAuthor,emoji:selectedEmoji||null};
     await setDoc(doc(db,'entries',ek),data);
     cachedEntries[ek]=data;
-    closeModal();
-    renderCalendar();
+    closeModal(); renderCalendar();
     showToast('저장됐어요 ♥');
   }
 
   async function deleteEntry(){
-    if(!currentDateKey||!currentAuthor||!confirm('이 기록을 삭제할까요?'))return;
+    if(!currentDateKey||!currentAuthor||!confirm('이 기록을 삭제할까요?')) return;
     showToast('삭제 중...');
     const ek=entryKey(currentDateKey,currentAuthor);
     await deleteDoc(doc(db,'entries',ek));
     delete cachedEntries[ek];
-    closeModal();
-    renderCalendar();
+    closeModal(); renderCalendar();
     showToast('삭제됐어요');
   }
 
@@ -405,11 +581,6 @@
   document.getElementById('prev-btn').onclick=()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();};
   document.getElementById('next-btn').onclick=()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();};
   document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
-
-  updateDisplay();
-  document.getElementById('entry-list').innerHTML='<div class="loading">불러오는 중...</div>';
-  await loadEntries();
-  renderCalendar();
 </script>
 </body>
 </html>
