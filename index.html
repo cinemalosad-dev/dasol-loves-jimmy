@@ -432,11 +432,10 @@
 
 <div class="toast" id="toast"></div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-  import { getFirestore, doc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
-
-  const app = initializeApp({
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const app = firebase.initializeApp({
     apiKey: "AIzaSyADhK7dI7pIaz40Z6ttjUn_Cp7R5fsRmSU",
     authDomain: "i-like-jimmy.firebaseapp.com",
     projectId: "i-like-jimmy",
@@ -444,7 +443,7 @@
     messagingSenderId: "906121789551",
     appId: "1:906121789551:web:152d769884507a78618d9a"
   });
-  const db = getFirestore(app);
+  const db = firebase.firestore();
 
 
   // ── 날씨 (Open-Meteo 무료 API) ──
@@ -624,7 +623,7 @@
   const savedUser = sessionStorage.getItem('ourtime_user');
   if(savedUser && (savedUser === 'Dasol' || savedUser === 'Jimmy')) {
     loggedInUser = savedUser;
-    await enterApp();
+    enterApp();
   }
 
   // ── 토스트 ──
@@ -656,7 +655,7 @@
 
   async function loadEntries(){
     cachedEntries={};
-    const snap=await getDocs(collection(db,'entries'));
+    const snap=await db.collection('entries').get();
     snap.forEach(d=>{
       const id=d.id, data=d.data();
       if(!id.includes('_')){
@@ -731,7 +730,6 @@
     list.querySelectorAll('.day-detail').forEach(el=>{
       el.onclick=()=>openDayModal(el.dataset.dk);
     });
-  }
   }
 
   function openDayView(y,m,d){
@@ -836,7 +834,7 @@
       reactions[loggedInUser] = emoji;
     }
     const updated = {...entry, reactions};
-    await setDoc(doc(db,'entries',ek), updated);
+    await db.collection('entries').doc(ek).set(updated);
     cachedEntries[ek] = updated;
     renderReadReactions(reactions);
     renderCalendar();
@@ -902,7 +900,7 @@
     showToast('저장 중...');
     const ek=entryKey(currentDateKey,currentAuthor);
     const data={text,author:currentAuthor,emoji:selectedEmoji||null};
-    await setDoc(doc(db,'entries',ek),data);
+    await db.collection('entries').doc(ek).set(data);
     cachedEntries[ek]=data;
     closeModal(); renderCalendar();
     showToast('저장됐어요 ♥');
@@ -912,7 +910,7 @@
     if(!currentDateKey||!currentAuthor||!confirm('이 기록을 삭제할까요?')) return;
     showToast('삭제 중...');
     const ek=entryKey(currentDateKey,currentAuthor);
-    await deleteDoc(doc(db,'entries',ek));
+    await db.collection('entries').doc(ek).delete();
     delete cachedEntries[ek];
     closeModal(); renderCalendar();
     showToast('삭제됐어요');
