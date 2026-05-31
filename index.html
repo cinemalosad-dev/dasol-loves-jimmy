@@ -128,20 +128,38 @@
   .cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--red); }
   .cal-dot.mint { background: var(--mint); }
   .cal-emoji { font-size: 10px; line-height: 1; }
-  .day-detail { background: var(--surface); border: 0.5px solid var(--border); border-radius: 16px; margin-bottom: 1rem; overflow: hidden; }
-  .day-detail-header { padding: 0.875rem 1rem 0.6rem; border-bottom: 0.5px solid var(--border); }
-  .day-detail-date { font-family: var(--serif); font-size: 15px; color: var(--text); }
-  .author-entries { display: flex; flex-direction: column; }
-  .author-entry { padding: 0.875rem 1rem; border-bottom: 0.5px solid var(--border); transition: background 0.15s; }
-  .author-entry:last-child { border-bottom: none; }
-  .author-entry.clickable { cursor: pointer; }
-  .author-entry.clickable:hover { background: var(--surface2); }
-  .author-entry-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem; }
-  .author-name { font-size: 12px; font-weight: 500; }
-  .author-name.dasol { color: var(--red); }
-  .author-name.jimmy { color: var(--mint); }
-  .author-entry-text { font-size: 13px; color: var(--text); line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
-  .author-entry-empty { font-size: 12px; color: var(--muted); font-style: italic; }
+  .day-detail { background: var(--surface); border: 0.5px solid var(--border); border-radius: 14px; margin-bottom: 0.6rem; padding: 0.875rem 1rem; cursor: pointer; transition: background 0.15s; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .day-detail:hover { background: var(--surface2); }
+  .day-detail-left { flex: 1; min-width: 0; }
+  .day-detail-date { font-family: var(--serif); font-size: 14px; color: var(--text); margin-bottom: 4px; }
+  .day-detail-preview { display: flex; gap: 8px; align-items: center; }
+  .day-detail-author-chip { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+  .day-detail-author-chip.dasol { background: var(--red-light); color: var(--red); }
+  .day-detail-author-chip.jimmy { background: var(--mint-light); color: var(--mint); }
+  .day-detail-snippet { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+  .day-detail-arrow { font-size: 14px; color: var(--muted); flex-shrink: 0; }
+  /* 날짜 팝업 모달 */
+  .day-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,36,32,0.45); z-index: 105; align-items: center; justify-content: center; padding: 1rem; }
+  .day-modal-overlay.open { display: flex; }
+  .day-modal { background: var(--surface); border-radius: 20px; width: 100%; max-width: 360px; max-height: 88vh; overflow-y: auto; }
+  .day-modal-header { padding: 1.25rem 1.25rem 0.75rem; border-bottom: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .day-modal-title { font-family: var(--serif); font-size: 18px; color: var(--text); }
+  .day-modal-close { background: none; border: none; font-size: 18px; color: var(--muted); cursor: pointer; padding: 2px 6px; }
+  .day-modal-body { padding: 1rem 1.25rem; }
+  .day-modal-section { margin-bottom: 1rem; }
+  .day-modal-section:last-child { margin-bottom: 0; }
+  .day-modal-author-label { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 10px; display: inline-block; margin-bottom: 0.5rem; }
+  .day-modal-author-label.dasol { background: var(--red-light); color: var(--red); }
+  .day-modal-author-label.jimmy { background: var(--mint-light); color: var(--mint); }
+  .day-modal-text { font-size: 14px; color: var(--text); line-height: 1.8; white-space: pre-wrap; word-break: break-all; }
+  .day-modal-empty { font-size: 13px; color: var(--muted); font-style: italic; }
+  .day-modal-emoji { font-size: 20px; margin-bottom: 4px; }
+  .day-modal-divider { height: 0.5px; background: var(--border); margin: 1rem 0; }
+  .day-modal-action { display: flex; gap: 8px; margin-top: 0.75rem; }
+  .day-modal-edit-btn { font-family: var(--sans); font-size: 12px; height: 34px; padding: 0 14px; border-radius: 8px; border: 0.5px solid var(--border); background: none; color: var(--muted); cursor: pointer; }
+  .day-modal-edit-btn:hover { background: var(--surface2); }
+  .day-modal-write-btn { font-family: var(--sans); font-size: 12px; height: 34px; padding: 0 14px; border-radius: 8px; border: none; background: var(--red); color: #fff; cursor: pointer; }
+  .day-modal-write-btn.jimmy { background: var(--mint); }
   .entry-list { margin-bottom: 1.5rem; }
   .no-entries { text-align: center; font-size: 12px; color: var(--muted); padding: 1.25rem 0; }
   .loading { text-align: center; font-size: 12px; color: var(--muted); padding: 1rem 0; }
@@ -366,6 +384,31 @@
 </div>
 
 <button class="scroll-top-btn" id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- 날짜 팝업 모달 -->
+<div class="day-modal-overlay" id="day-modal">
+  <div class="day-modal">
+    <div class="day-modal-header">
+      <div class="day-modal-title" id="day-modal-title"></div>
+      <button class="day-modal-close" onclick="closeDayModal()">✕</button>
+    </div>
+    <div class="day-modal-body">
+      <div class="day-modal-section">
+        <div class="day-modal-author-label dasol">Dasol</div>
+        <div id="day-modal-dasol"></div>
+      </div>
+      <div class="day-modal-divider"></div>
+      <div class="day-modal-section">
+        <div class="day-modal-author-label jimmy">Jimmy</div>
+        <div id="day-modal-jimmy"></div>
+      </div>
+      <div class="day-modal-action">
+        <button class="day-modal-edit-btn" id="day-modal-react-btn" style="display:none;">💬 리액션 남기기</button>
+        <button class="day-modal-write-btn" id="day-modal-my-btn">+ 내 기록 쓰기</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- 읽기 모달 -->
 <div class="read-modal-overlay" id="read-modal">
@@ -703,13 +746,50 @@
 
   function openDayView(y,m,d){
     const dk=dateKey(y,m,d);
+    openDayModal(dk);
+  }
+
+  function openDayModal(dk) {
     const {Dasol:de,Jimmy:je}=getDateEntries(dk);
-    if(!de&&!je){
-      openModal(dk, loggedInUser);
+    const[ky,km,kd]=dk.split('-');
+    const dow=getDow(dk);
+    // 헤더
+    document.getElementById('day-modal-title').textContent=parseInt(km)+'월 '+parseInt(kd)+'일 ('+dow+')';
+    // Dasol 섹션
+    const dasolSec=document.getElementById('day-modal-dasol');
+    dasolSec.innerHTML=`
+      ${de?.emoji?`<div class="day-modal-emoji">${de.emoji}</div>`:''}
+      ${de?.text?`<div class="day-modal-text">${de.text}</div>`:`<div class="day-modal-empty">아직 기록이 없어요</div>`}
+      ${getReactionBar(de?.reactions)}
+    `;
+    // Jimmy 섹션
+    const jimmySec=document.getElementById('day-modal-jimmy');
+    jimmySec.innerHTML=`
+      ${je?.emoji?`<div class="day-modal-emoji">${je.emoji}</div>`:''}
+      ${je?.text?`<div class="day-modal-text">${je.text}</div>`:`<div class="day-modal-empty">아직 기록이 없어요</div>`}
+      ${getReactionBar(je?.reactions)}
+    `;
+    // 내 기록 버튼
+    const myEntry = loggedInUser==='Dasol'?de:je;
+    const myBtn=document.getElementById('day-modal-my-btn');
+    myBtn.textContent=myEntry?'내 기록 수정':'+ 내 기록 쓰기';
+    myBtn.className='day-modal-write-btn'+(loggedInUser==='Jimmy'?' jimmy':'');
+    myBtn.onclick=()=>{closeDayModal();openModal(dk,loggedInUser);};
+    // 상대방 리액션 버튼 (읽기 전용 상대 기록에 리액션)
+    const otherAuthor=loggedInUser==='Dasol'?'Jimmy':'Dasol';
+    const otherEntry=loggedInUser==='Dasol'?je:de;
+    const reactBtn=document.getElementById('day-modal-react-btn');
+    if(otherEntry?.text) {
+      reactBtn.style.display='inline-flex';
+      reactBtn.onclick=()=>{closeDayModal();openReadModal(dk,otherAuthor);};
     } else {
-      const el=document.querySelector(`.author-entry[data-dk="${dk}"][data-author="${loggedInUser}"]`);
-      if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+      reactBtn.style.display='none';
     }
+    document.getElementById('day-modal').classList.add('open');
+  }
+
+  window.closeDayModal=function(){
+    document.getElementById('day-modal').classList.remove('open');
   }
 
   let readModalDk = null;
@@ -783,6 +863,10 @@
   window.closeReadModal = function() {
     document.getElementById('read-modal').classList.remove('open');
   }
+
+  document.getElementById('day-modal').addEventListener('click', e=>{
+    if(e.target===document.getElementById('day-modal')) closeDayModal();
+  });
 
   document.getElementById('read-modal').addEventListener('click', e=>{
     if(e.target===document.getElementById('read-modal')) closeReadModal();
