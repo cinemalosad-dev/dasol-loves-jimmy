@@ -219,11 +219,11 @@
     <div class="profile-title">Our Time</div>
     <div class="profile-sub">누구로 입장할까요?</div>
     <div class="profile-cards">
-      <div class="profile-card" id="card-dasol" onclick="selectProfile('Dasol')">
+      <div class="profile-card" id="card-dasol-btn">
         <div class="profile-avatar dasol">D</div>
         <div class="profile-name">Dasol</div>
       </div>
-      <div class="profile-card" id="card-jimmy" onclick="selectProfile('Jimmy')">
+      <div class="profile-card" id="card-jimmy-btn">
         <div class="profile-avatar jimmy">J</div>
         <div class="profile-name">Jimmy</div>
       </div>
@@ -239,18 +239,18 @@
         </div>
         <div class="pin-error" id="pin-error"></div>
         <div class="pin-pad">
-          <button class="pin-key" onclick="pinInput('1')">1</button>
-          <button class="pin-key" onclick="pinInput('2')">2</button>
-          <button class="pin-key" onclick="pinInput('3')">3</button>
-          <button class="pin-key" onclick="pinInput('4')">4</button>
-          <button class="pin-key" onclick="pinInput('5')">5</button>
-          <button class="pin-key" onclick="pinInput('6')">6</button>
-          <button class="pin-key" onclick="pinInput('7')">7</button>
-          <button class="pin-key" onclick="pinInput('8')">8</button>
-          <button class="pin-key" onclick="pinInput('9')">9</button>
-          <button class="pin-key" onclick="pinCancel()">취소</button>
-          <button class="pin-key" onclick="pinInput('0')">0</button>
-          <button class="pin-key del" onclick="pinDelete()">⌫</button>
+          <button class="pin-key" data-pin="1">1</button>
+          <button class="pin-key" data-pin="2">2</button>
+          <button class="pin-key" data-pin="3">3</button>
+          <button class="pin-key" data-pin="4">4</button>
+          <button class="pin-key" data-pin="5">5</button>
+          <button class="pin-key" data-pin="6">6</button>
+          <button class="pin-key" data-pin="7">7</button>
+          <button class="pin-key" data-pin="8">8</button>
+          <button class="pin-key" data-pin="9">9</button>
+          <button class="pin-key" id="pin-cancel-btn">취소</button>
+          <button class="pin-key" data-pin="0">0</button>
+          <button class="pin-key del" id="pin-delete-btn">⌫</button>
         </div>
       </div>
     </div>
@@ -266,7 +266,7 @@
           <div class="profile-bar-sub">로그인됨</div>
         </div>
       </div>
-      <button class="logout-btn" onclick="logout()">로그아웃</button>
+      <button class="logout-btn" id="logout-btn">로그아웃</button>
     </div>
 
     <div class="header">
@@ -390,7 +390,7 @@
   <div class="day-modal">
     <div class="day-modal-header">
       <div class="day-modal-title" id="day-modal-title"></div>
-      <button class="day-modal-close" onclick="closeDayModal()">✕</button>
+      <button class="day-modal-close" id="day-modal-close-btn">✕</button>
     </div>
     <div class="day-modal-body">
       <div class="day-modal-section">
@@ -415,7 +415,7 @@
   <div class="read-modal">
     <div class="read-modal-header">
       <div class="read-modal-title" id="read-modal-title"></div>
-      <button class="read-modal-close" onclick="closeReadModal()">✕</button>
+      <button class="read-modal-close" id="read-modal-close-btn">✕</button>
     </div>
     <div class="read-modal-meta">
       <span class="read-modal-badge" id="read-modal-badge"></span>
@@ -423,7 +423,7 @@
     </div>
     <div class="read-modal-text" id="read-modal-text"></div>
     <div style="margin-top:1rem;position:relative;">
-      <button class="add-reaction-btn" onclick="toggleReactionPicker()">+ 리액션</button>
+      <button class="add-reaction-btn" id="toggle-reaction-btn">+ 리액션</button>
       <div class="reaction-picker" id="reaction-picker"></div>
     </div>
     <div class="reaction-bar" id="read-reaction-bar" style="margin-top:8px;"></div>
@@ -540,7 +540,7 @@
   let pinTarget = null;
   let pinValue = '';
 
-  window.selectProfile = function(name) {
+  function selectProfile(name) {
     pinTarget = name;
     pinValue = '';
     updatePinDots();
@@ -552,7 +552,7 @@
     document.getElementById('pin-section').classList.add('visible');
   }
 
-  window.pinInput = function(n) {
+  function pinInput(n) {
     if(pinValue.length >= 4) return;
     pinValue += n;
     updatePinDots();
@@ -561,12 +561,12 @@
     }
   }
 
-  window.pinDelete = function() {
+  function pinDelete() {
     pinValue = pinValue.slice(0,-1);
     updatePinDots();
   }
 
-  window.pinCancel = function() {
+  function pinCancel() {
     pinValue = '';
     pinTarget = null;
     document.getElementById('pin-section').classList.remove('visible');
@@ -592,7 +592,7 @@
     }
   }
 
-  window.logout = function() {
+  function logout() {
     loggedInUser = null;
     sessionStorage.removeItem('ourtime_user');
     document.getElementById('main-screen').classList.remove('visible');
@@ -778,7 +778,7 @@
     document.getElementById('day-modal').classList.add('open');
   }
 
-  window.closeDayModal=function(){
+  function closeDayModal(){
     document.getElementById('day-modal').classList.remove('open');
   }
 
@@ -818,11 +818,11 @@
     ).join('');
   }
 
-  window.toggleReactionPicker = function() {
+  function toggleReactionPicker() {
     document.getElementById('reaction-picker').classList.toggle('open');
   }
 
-  window.addReaction = async function(emoji) {
+  window.addReaction = async function addReaction(emoji) {
     if(!readModalDk||!readModalAuthor) return;
     document.getElementById('reaction-picker').classList.remove('open');
     const ek = entryKey(readModalDk, readModalAuthor);
@@ -842,7 +842,7 @@
     renderCalendar();
   }
 
-  window.closeReadModal = function() {
+  function closeReadModal() {
     document.getElementById('read-modal').classList.remove('open');
   }
 
@@ -923,6 +923,19 @@
     const btn = document.getElementById('scroll-top-btn');
     if(btn) btn.classList.toggle('visible', window.scrollY > 300);
   });
+
+  // ── 프로필/PIN 이벤트 연결 ──
+  document.getElementById('card-dasol-btn').addEventListener('click', () => selectProfile('Dasol'));
+  document.getElementById('card-jimmy-btn').addEventListener('click', () => selectProfile('Jimmy'));
+  document.querySelectorAll('[data-pin]').forEach(btn => {
+    btn.addEventListener('click', () => pinInput(btn.dataset.pin));
+  });
+  document.getElementById('pin-cancel-btn').addEventListener('click', pinCancel);
+  document.getElementById('pin-delete-btn').addEventListener('click', pinDelete);
+  document.getElementById('logout-btn').addEventListener('click', logout);
+  document.getElementById('day-modal-close-btn').addEventListener('click', closeDayModal);
+  document.getElementById('read-modal-close-btn').addEventListener('click', closeReadModal);
+  document.getElementById('toggle-reaction-btn').addEventListener('click', toggleReactionPicker);
 
   document.getElementById('btn-save').onclick=saveEntry;
   document.getElementById('btn-cancel').onclick=closeModal;
