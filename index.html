@@ -557,7 +557,7 @@
     pinValue += n;
     updatePinDots();
     if(pinValue.length === 4) {
-      setTimeout(() => checkPin(), 150);
+      setTimeout(async () => await checkPin(), 150);
     }
   }
 
@@ -580,11 +580,11 @@
     }
   }
 
-  function checkPin() {
+  async function checkPin() {
     if(pinValue === PINS[pinTarget]) {
       loggedInUser = pinTarget;
       sessionStorage.setItem('ourtime_user', pinTarget);
-      enterApp();
+      await enterApp();
     } else {
       document.getElementById('pin-error').textContent = '비밀번호가 틀렸어요';
       pinValue = '';
@@ -601,25 +601,30 @@
     pinValue = ''; pinTarget = null;
   }
 
-  function enterApp() {
-    document.getElementById('profile-screen').style.display = 'none';
-    document.getElementById('main-screen').classList.add('visible');
-    // 프로필 바 설정
-    const avatar = document.getElementById('bar-avatar');
-    avatar.textContent = loggedInUser[0];
-    avatar.className = 'profile-bar-avatar ' + loggedInUser.toLowerCase();
-    document.getElementById('bar-name').textContent = loggedInUser;
-    updateDisplay();
-    loadWeather();
-    document.getElementById('entry-list').innerHTML = '<div class="loading">불러오는 중...</div>';
-    loadEntries().then(renderCalendar);
+  async function enterApp() {
+    try {
+      document.getElementById('profile-screen').style.display = 'none';
+      document.getElementById('main-screen').classList.add('visible');
+      const avatar = document.getElementById('bar-avatar');
+      avatar.textContent = loggedInUser[0];
+      avatar.className = 'profile-bar-avatar ' + loggedInUser.toLowerCase();
+      document.getElementById('bar-name').textContent = loggedInUser;
+      updateDisplay();
+      loadWeather();
+      document.getElementById('entry-list').innerHTML = '<div class="loading">불러오는 중...</div>';
+      await loadEntries();
+      renderCalendar();
+    } catch(e) {
+      console.error('enterApp error:', e);
+      document.getElementById('entry-list').innerHTML = '<div class="no-entries">불러오기 실패. 새로고침 해주세요.</div>';
+    }
   }
 
   // ── 세션 복원 ──
   const savedUser = sessionStorage.getItem('ourtime_user');
   if(savedUser && (savedUser === 'Dasol' || savedUser === 'Jimmy')) {
     loggedInUser = savedUser;
-    enterApp();
+    await enterApp();
   }
 
   // ── 토스트 ──
