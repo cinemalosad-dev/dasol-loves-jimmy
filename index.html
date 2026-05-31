@@ -82,6 +82,22 @@
   .bd-card.y .bd-num { color: var(--mint); } .bd-card.m .bd-num { color: var(--beige); } .bd-card.d .bd-num { color: var(--red); }
   .bd-label { font-size: 10px; margin-top: 2px; }
   .bd-card.y .bd-label { color: var(--mint); } .bd-card.m .bd-label { color: var(--beige); } .bd-card.d .bd-label { color: var(--red); }
+
+  .weather-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; }
+  .weather-card-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .weather-cities { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0.5rem; }
+  .weather-city { background: var(--surface2); border-radius: 10px; padding: 0.5rem 0.75rem; }
+  .weather-city-name { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+  .weather-city-row { display: flex; align-items: center; gap: 6px; }
+  .weather-icon { font-size: 18px; }
+  .weather-temp { font-family: var(--serif); font-size: 20px; color: var(--text); }
+  .weather-uv { font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 500; }
+  .weather-uv.low { background: #E6F2EE; color: var(--mint); }
+  .weather-uv.moderate { background: #FEFAEC; color: #B8960A; }
+  .weather-uv.high { background: #FEF0F0; color: var(--red); }
+  .weather-uv.very-high { background: #F5E8E3; color: #A03000; }
+  .weather-comment { font-size: 11px; color: var(--muted); text-align: center; padding-top: 0.4rem; border-top: 0.5px solid var(--border); margin-top: 0.4rem; }
+  .weather-loading { font-size: 12px; color: var(--muted); text-align: center; padding: 0.5rem; }
   .distance-card { border-radius: 12px; padding: 0.7rem 1rem; margin-bottom: 1.25rem; background: var(--surface); border: 0.5px solid var(--border); }
   .distance-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 0.5rem; }
   .distance-row { display: flex; align-items: center; gap: 0; }
@@ -167,6 +183,7 @@
   .read-modal-text { font-size: 14px; color: var(--text); line-height: 1.8; white-space: pre-wrap; word-break: break-all; }
   .reaction-bar { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
   .reaction-btn { font-size: 12px; background: var(--surface2); border: 0.5px solid var(--border); border-radius: 20px; padding: 2px 6px; cursor: default; line-height: 1.4; }
+  .reaction-btn.my-reaction { background: var(--red-light); border-color: var(--red); }
   .reaction-picker { display: none; position: absolute; background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 8px; z-index: 50; flex-wrap: wrap; gap: 3px; width: 220px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); bottom: 32px; left: 0; }
   .reaction-picker.open { display: flex; }
   .reaction-pick-btn { font-size: 16px; background: none; border: none; cursor: pointer; padding: 2px 3px; border-radius: 6px; }
@@ -268,9 +285,9 @@
     <div class="distance-card">
       <div class="distance-label">우리 집 사이 거리</div>
       <div class="distance-row">
-        <div class="distance-house">
+        <div class="distance-house" onclick="window.open('https://maps.google.com/?q=인천+부평구+안남로206번길+18','_blank')" style="cursor:pointer;" title="Jimmy 집 보기">
           <div class="distance-house-icon">🏠</div>
-          <div class="distance-house-name">Jimmy</div>
+          <div class="distance-house-name" style="color:var(--mint);">Jimmy</div>
         </div>
         <div class="distance-line">
           <div class="distance-dots">
@@ -279,10 +296,36 @@
             <div class="distance-dash"></div>
           </div>
         </div>
-        <div class="distance-house">
+        <div class="distance-house" onclick="window.open('https://maps.google.com/?q=서울+은평구+불광로6길+5-8','_blank')" style="cursor:pointer;" title="Dasol 집 보기">
           <div class="distance-house-icon">🏡</div>
-          <div class="distance-house-name">Dasol</div>
+          <div class="distance-house-name" style="color:var(--red);">Dasol</div>
         </div>
+      </div>
+    </div>
+
+    <div class="weather-card" id="weather-card">
+      <div class="weather-card-label">☀️ 오늘의 날씨</div>
+      <div class="weather-loading" id="weather-loading">날씨 불러오는 중...</div>
+      <div id="weather-content" style="display:none;">
+        <div class="weather-cities">
+          <div class="weather-city">
+            <div class="weather-city-name">서울 (Dasol)</div>
+            <div class="weather-city-row">
+              <span class="weather-icon" id="w-icon-seoul">☀️</span>
+              <span class="weather-temp" id="w-temp-seoul">--°C</span>
+              <span class="weather-uv" id="w-uv-seoul">UV --</span>
+            </div>
+          </div>
+          <div class="weather-city">
+            <div class="weather-city-name">인천 (Jimmy)</div>
+            <div class="weather-city-row">
+              <span class="weather-icon" id="w-icon-incheon">☀️</span>
+              <span class="weather-temp" id="w-temp-incheon">--°C</span>
+              <span class="weather-uv" id="w-uv-incheon">UV --</span>
+            </div>
+          </div>
+        </div>
+        <div class="weather-comment" id="w-comment"></div>
       </div>
     </div>
 
@@ -359,6 +402,74 @@
     appId: "1:906121789551:web:152d769884507a78618d9a"
   });
   const db = getFirestore(app);
+
+
+  // ── 날씨 (Open-Meteo 무료 API) ──
+  async function loadWeather() {
+    try {
+      // 서울: 37.5665, 126.9780 / 인천: 37.4563, 126.7052
+      const [seoulRes, incheonRes] = await Promise.all([
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=temperature_2m,weather_code,uv_index&timezone=Asia%2FSeoul'),
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=37.4563&longitude=126.7052&current=temperature_2m,weather_code,uv_index&timezone=Asia%2FSeoul')
+      ]);
+      const [seoul, incheon] = await Promise.all([seoulRes.json(), incheonRes.json()]);
+
+      function wxIcon(code) {
+        if(code===0) return '☀️';
+        if(code<=2) return '⛅';
+        if(code<=3) return '☁️';
+        if(code<=49) return '🌫️';
+        if(code<=59) return '🌦️';
+        if(code<=69) return '🌧️';
+        if(code<=79) return '❄️';
+        if(code<=82) return '🌧️';
+        if(code<=99) return '⛈️';
+        return '🌡️';
+      }
+      function uvClass(uv) {
+        if(uv<3) return 'low';
+        if(uv<6) return 'moderate';
+        if(uv<8) return 'high';
+        return 'very-high';
+      }
+      function uvLabel(uv) {
+        if(uv<3) return '낮음';
+        if(uv<6) return '보통';
+        if(uv<8) return '높음';
+        return '매우높음';
+      }
+      function sunscreenComment(uv) {
+        if(uv<3) return '🌿 오늘은 자외선 걱정 없어요!';
+        if(uv<6) return '🧴 선크림 챙기면 좋을 것 같아요~';
+        if(uv<8) return '☀️ 선크림 필수! 2시간마다 덧발라줘요';
+        return '🔥 선크림 필수!! 외출 전 꼭 발라요!';
+      }
+
+      const sTemp = Math.round(seoul.current.temperature_2m);
+      const sUV = Math.round(seoul.current.uv_index * 10) / 10;
+      const iTemp = Math.round(incheon.current.temperature_2m);
+      const iUV = Math.round(incheon.current.uv_index * 10) / 10;
+      const maxUV = Math.max(sUV, iUV);
+
+      document.getElementById('w-icon-seoul').textContent = wxIcon(seoul.current.weather_code);
+      document.getElementById('w-temp-seoul').textContent = sTemp + '°C';
+      const sUVEl = document.getElementById('w-uv-seoul');
+      sUVEl.textContent = 'UV ' + sUV + ' ' + uvLabel(sUV);
+      sUVEl.className = 'weather-uv ' + uvClass(sUV);
+
+      document.getElementById('w-icon-incheon').textContent = wxIcon(incheon.current.weather_code);
+      document.getElementById('w-temp-incheon').textContent = iTemp + '°C';
+      const iUVEl = document.getElementById('w-uv-incheon');
+      iUVEl.textContent = 'UV ' + iUV + ' ' + uvLabel(iUV);
+      iUVEl.className = 'weather-uv ' + uvClass(iUV);
+
+      document.getElementById('w-comment').textContent = sunscreenComment(maxUV);
+      document.getElementById('weather-loading').style.display = 'none';
+      document.getElementById('weather-content').style.display = 'block';
+    } catch(e) {
+      document.getElementById('weather-loading').textContent = '날씨를 불러올 수 없어요';
+    }
+  }
 
   const START_DATE = '2026-01-16';
   const EMOJIS = [
@@ -455,6 +566,7 @@
     avatar.className = 'profile-bar-avatar ' + loggedInUser.toLowerCase();
     document.getElementById('bar-name').textContent = loggedInUser;
     updateDisplay();
+    loadWeather();
     document.getElementById('entry-list').innerHTML = '<div class="loading">불러오는 중...</div>';
     loadEntries().then(renderCalendar);
   }
@@ -564,7 +676,7 @@
           ${dasolReadable?'<span style="font-size:11px;color:var(--muted);">자세히 보기</span>':''}
         </div>
         ${de?.text?`<div class="author-entry-text">${de.text.substring(0,80)}${de.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
-        ${(de?.reactions&&Object.keys(de.reactions).length)?`<div class="reaction-bar">${Object.entries(de.reactions).filter(([k])=>!k.endsWith('_by')).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')}</div>`:''}
+        ${(de?.reactions&&Object.keys(de.reactions).length)?`<div class="reaction-bar">${(()=>{const g={};Object.values(de.reactions).forEach(e=>{g[e]=(g[e]||0)+1;});return Object.entries(g).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('');})()}</div>`:''}
       </div>`;
       const jimmyHtml=`<div class="author-entry${jimmyClickable?' clickable':(jimmyReadable?' clickable':'')}" data-dk="${dk}" data-author="Jimmy" data-mode="${jimmyClickable?'edit':(jimmyReadable?'read':'')}">
         <div class="author-entry-top">
@@ -573,7 +685,7 @@
           ${jimmyReadable?'<span style="font-size:11px;color:var(--muted);">자세히 보기</span>':''}
         </div>
         ${je?.text?`<div class="author-entry-text">${je.text.substring(0,80)}${je.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
-        ${(je?.reactions&&Object.keys(je.reactions).length)?`<div class="reaction-bar">${Object.entries(je.reactions).filter(([k])=>!k.endsWith('_by')).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')}</div>`:''}
+        ${(je?.reactions&&Object.keys(je.reactions).length)?`<div class="reaction-bar">${(()=>{const g={};Object.values(je.reactions).forEach(e=>{g[e]=(g[e]||0)+1;});return Object.entries(g).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('');})()}</div>`:''}
       </div>`;
       return `<div class="day-detail">
         <div class="day-detail-header"><div class="day-detail-date">${parseInt(m)}월 ${parseInt(d)}일 (${dow})</div></div>
@@ -621,9 +733,18 @@
 
   function renderReadReactions(reactions) {
     const bar = document.getElementById('read-reaction-bar');
-    const entries = Object.entries(reactions).filter(([k])=>!k.endsWith('_by'));
-    bar.innerHTML = entries.length
-      ? entries.map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')
+    // reactions = {Dasol: '❤️', Jimmy: '🔥'} 구조
+    // 같은 이모티콘 그룹핑해서 표시
+    const grouped = {};
+    Object.entries(reactions).forEach(([user, emoji]) => {
+      if(!grouped[emoji]) grouped[emoji] = [];
+      grouped[emoji].push(user);
+    });
+    const myEmoji = reactions[loggedInUser];
+    bar.innerHTML = Object.keys(grouped).length
+      ? Object.entries(grouped).map(([e, users]) =>
+          `<span class="reaction-btn ${users.includes(loggedInUser)?'my-reaction':''}" title="${users.join(', ')}">${e} ${users.length}</span>`
+        ).join('')
       : '';
   }
 
@@ -644,17 +765,14 @@
     document.getElementById('reaction-picker').classList.remove('open');
     const ek = entryKey(readModalDk, readModalAuthor);
     const entry = cachedEntries[ek]||{};
+    // reactions = { Dasol: 'emoji', Jimmy: 'emoji' } 구조
     const reactions = {...(entry.reactions||{})};
-    // 한 사람(loggedInUser)당 하나만 - 기존 리액션 제거 후 새것 추가
-    const myPrevKey = Object.keys(reactions).find(k => reactions[k+'_by'] === loggedInUser);
-    if(myPrevKey) {
-      reactions[myPrevKey] = Math.max(0, (reactions[myPrevKey]||1) - 1);
-      if(reactions[myPrevKey] <= 0) delete reactions[myPrevKey];
-      delete reactions[myPrevKey+'_by'];
+    // 같은 이모티콘 다시 누르면 취소, 다른 거 누르면 교체
+    if(reactions[loggedInUser] === emoji) {
+      delete reactions[loggedInUser];
+    } else {
+      reactions[loggedInUser] = emoji;
     }
-    // 내 리액션 저장 (emoji -> count, emoji_by -> 누가 눌렀는지)
-    reactions[emoji] = (reactions[emoji]||0) + 1;
-    reactions[emoji+'_by'] = loggedInUser;
     const updated = {...entry, reactions};
     await setDoc(doc(db,'entries',ek), updated);
     cachedEntries[ek] = updated;
