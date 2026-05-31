@@ -232,7 +232,17 @@
   async function loadEntries(){
     cachedEntries={};
     const snap=await getDocs(collection(db,'entries'));
-    snap.forEach(d=>{cachedEntries[d.id]=d.data();});
+    snap.forEach(d=>{
+      const id=d.id;
+      const data=d.data();
+      // 구형 key "2026-05-04" → 작성자 필드 기준으로 새 형식으로 읽기
+      if(!id.includes('_')){
+        const newKey=id+'_'+(data.author||'Dasol');
+        if(!cachedEntries[newKey]) cachedEntries[newKey]=data;
+      } else {
+        cachedEntries[id]=data;
+      }
+    });
   }
 
   function getDateEntries(dk){
