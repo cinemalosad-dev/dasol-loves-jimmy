@@ -732,6 +732,13 @@
     });
   }
 
+
+  function getReactionBar(reactions) {
+    if(!reactions||!Object.keys(reactions).length) return '';
+    const emojis = Object.values(reactions).filter(Boolean);
+    return emojis.length ? `<div class="reaction-bar">${emojis.map(e=>`<span class="reaction-btn">${e}</span>`).join('')}</div>` : '';
+  }
+
   function openDayView(y,m,d){
     const dk=dateKey(y,m,d);
     openDayModal(dk);
