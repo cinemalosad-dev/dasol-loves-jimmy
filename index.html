@@ -68,20 +68,30 @@
   .heart-icon { color: var(--red); font-size: 16px; animation: pulse 2.4s ease-in-out infinite; display: inline-block; }
   @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.2);} }
   .dday-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-  .dday-card { background: var(--red-light); border-radius: 14px; padding: 0.875rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .dday-card-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
-  .dday-card-prefix { font-size: 14px; color: var(--red); font-weight: 500; }
-  .dday-card-num { font-family: var(--serif); font-size: 38px; color: var(--text); line-height: 1; letter-spacing: -1px; }
-  .dday-today { background: var(--beige-light); border-radius: 14px; padding: 0.875rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .dday-today-label { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
-  .dday-today-val { font-size: 13px; font-weight: 500; color: var(--text); text-align: center; line-height: 1.4; }
+  .dday-card { background: var(--red-light); border-radius: 12px; padding: 0.6rem 0.75rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .dday-card-label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); margin-bottom: 2px; }
+  .dday-card-prefix { font-size: 12px; color: var(--red); font-weight: 500; }
+  .dday-card-num { font-family: var(--serif); font-size: 28px; color: var(--text); line-height: 1; letter-spacing: -1px; }
+  .dday-today { background: var(--beige-light); border-radius: 12px; padding: 0.6rem 0.75rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .dday-today-label { font-size: 9px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+  .dday-today-val { font-size: 12px; font-weight: 500; color: var(--text); text-align: center; line-height: 1.4; }
   .breakdown-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
   .bd-card { border-radius: 12px; padding: 0.6rem 0.4rem; text-align: center; }
   .bd-card.y { background: var(--mint-light); } .bd-card.m { background: var(--beige-light); } .bd-card.d { background: var(--red-light); }
-  .bd-num { font-family: var(--serif); font-size: 22px; line-height: 1; }
+  .bd-num { font-family: var(--serif); font-size: 18px; line-height: 1; }
   .bd-card.y .bd-num { color: var(--mint); } .bd-card.m .bd-num { color: var(--beige); } .bd-card.d .bd-num { color: var(--red); }
   .bd-label { font-size: 10px; margin-top: 2px; }
   .bd-card.y .bd-label { color: var(--mint); } .bd-card.m .bd-label { color: var(--beige); } .bd-card.d .bd-label { color: var(--red); }
+  .distance-card { border-radius: 12px; padding: 0.7rem 1rem; margin-bottom: 1.25rem; background: var(--surface); border: 0.5px solid var(--border); }
+  .distance-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-align: center; margin-bottom: 0.5rem; }
+  .distance-row { display: flex; align-items: center; gap: 0; }
+  .distance-house { display: flex; flex-direction: column; align-items: center; gap: 2px; flex-shrink: 0; }
+  .distance-house-icon { font-size: 18px; }
+  .distance-house-name { font-size: 10px; font-weight: 500; color: var(--text); }
+  .distance-line { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .distance-dots { width: 100%; display: flex; align-items: center; gap: 0; }
+  .distance-dash { flex: 1; height: 1.5px; background: var(--border); }
+  .distance-km { font-size: 11px; font-weight: 500; color: var(--red); background: var(--red-light); padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
   .milestone-card { background: var(--red-light); border-radius: 12px; padding: 0.7rem 1rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
   .milestone-left { font-size: 12px; color: var(--red); } .milestone-right { font-size: 12px; font-weight: 500; color: var(--red); }
   .divider { height: 0.5px; background: var(--border); margin-bottom: 1.25rem; }
@@ -155,14 +165,13 @@
   .read-modal-badge.jimmy { background: var(--mint-light); color: var(--mint); }
   .read-modal-emoji { font-size: 22px; }
   .read-modal-text { font-size: 14px; color: var(--text); line-height: 1.8; white-space: pre-wrap; word-break: break-all; }
-  .reaction-bar { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-  .reaction-btn { font-size: 16px; background: var(--surface2); border: none; border-radius: 20px; padding: 3px 8px; cursor: pointer; transition: background 0.15s; }
-  .reaction-btn:hover { background: var(--beige-light); }
-  .reaction-picker { display: none; position: absolute; background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 8px; z-index: 50; flex-wrap: wrap; gap: 4px; width: 200px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .reaction-bar { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+  .reaction-btn { font-size: 12px; background: var(--surface2); border: 0.5px solid var(--border); border-radius: 20px; padding: 2px 6px; cursor: default; line-height: 1.4; }
+  .reaction-picker { display: none; position: absolute; background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 8px; z-index: 50; flex-wrap: wrap; gap: 3px; width: 220px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); bottom: 32px; left: 0; }
   .reaction-picker.open { display: flex; }
-  .reaction-pick-btn { font-size: 18px; background: none; border: none; cursor: pointer; padding: 2px; border-radius: 6px; }
+  .reaction-pick-btn { font-size: 16px; background: none; border: none; cursor: pointer; padding: 2px 3px; border-radius: 6px; }
   .reaction-pick-btn:hover { background: var(--surface2); }
-  .add-reaction-btn { font-size: 13px; color: var(--muted); background: var(--surface2); border: none; border-radius: 20px; padding: 3px 8px; cursor: pointer; }
+  .add-reaction-btn { font-size: 11px; color: var(--muted); background: var(--surface2); border: 0.5px solid var(--border); border-radius: 20px; padding: 2px 8px; cursor: pointer; }
   .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; font-size: 13px; padding: 0.6rem 1.25rem; border-radius: 20px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; }
   .toast.show { opacity: 1; }
 </style>
@@ -255,6 +264,28 @@
       <span class="milestone-right" id="next-milestone">—</span>
     </div>
     <div class="divider"></div>
+
+    <div class="distance-card">
+      <div class="distance-label">우리 집 사이 거리</div>
+      <div class="distance-row">
+        <div class="distance-house">
+          <div class="distance-house-icon">🏠</div>
+          <div class="distance-house-name">Jimmy</div>
+        </div>
+        <div class="distance-line">
+          <div class="distance-dots">
+            <div class="distance-dash"></div>
+            <div class="distance-km">21.6 km</div>
+            <div class="distance-dash"></div>
+          </div>
+        </div>
+        <div class="distance-house">
+          <div class="distance-house-icon">🏡</div>
+          <div class="distance-house-name">Dasol</div>
+        </div>
+      </div>
+    </div>
+
     <div class="calendar-wrap">
       <div class="section-label">데이트 기록</div>
       <div class="cal-header">
@@ -533,7 +564,7 @@
           ${dasolReadable?'<span style="font-size:11px;color:var(--muted);">자세히 보기</span>':''}
         </div>
         ${de?.text?`<div class="author-entry-text">${de.text.substring(0,80)}${de.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
-        ${(de?.reactions&&Object.keys(de.reactions).length)?`<div class="reaction-bar">${Object.entries(de.reactions).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')}</div>`:''}
+        ${(de?.reactions&&Object.keys(de.reactions).length)?`<div class="reaction-bar">${Object.entries(de.reactions).filter(([k])=>!k.endsWith('_by')).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')}</div>`:''}
       </div>`;
       const jimmyHtml=`<div class="author-entry${jimmyClickable?' clickable':(jimmyReadable?' clickable':'')}" data-dk="${dk}" data-author="Jimmy" data-mode="${jimmyClickable?'edit':(jimmyReadable?'read':'')}">
         <div class="author-entry-top">
@@ -542,7 +573,7 @@
           ${jimmyReadable?'<span style="font-size:11px;color:var(--muted);">자세히 보기</span>':''}
         </div>
         ${je?.text?`<div class="author-entry-text">${je.text.substring(0,80)}${je.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
-        ${(je?.reactions&&Object.keys(je.reactions).length)?`<div class="reaction-bar">${Object.entries(je.reactions).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')}</div>`:''}
+        ${(je?.reactions&&Object.keys(je.reactions).length)?`<div class="reaction-bar">${Object.entries(je.reactions).filter(([k])=>!k.endsWith('_by')).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')}</div>`:''}
       </div>`;
       return `<div class="day-detail">
         <div class="day-detail-header"><div class="day-detail-date">${parseInt(m)}월 ${parseInt(d)}일 (${dow})</div></div>
@@ -590,14 +621,16 @@
 
   function renderReadReactions(reactions) {
     const bar = document.getElementById('read-reaction-bar');
-    bar.innerHTML = Object.keys(reactions).length
-      ? Object.entries(reactions).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')
+    const entries = Object.entries(reactions).filter(([k])=>!k.endsWith('_by'));
+    bar.innerHTML = entries.length
+      ? entries.map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')
       : '';
   }
 
+  const REACTION_EMOJIS = ['❤️','🥰','😍','😂','😭','🥹','👍','👎','🔥','💯','🫶','😊','🤩','😴','🥵','☀️','🌧️','🎉','💕','🍺','☕','🍷','💻','🏃','🧘‍♀️','🌿','✨','😇','💰','🎵'];
   function buildReactionPicker() {
     const picker = document.getElementById('reaction-picker');
-    picker.innerHTML = EMOJIS.slice(0,20).map(e=>
+    picker.innerHTML = REACTION_EMOJIS.map(e=>
       `<button class="reaction-pick-btn" onclick="addReaction('${e}')">${e}</button>`
     ).join('');
   }
@@ -612,7 +645,16 @@
     const ek = entryKey(readModalDk, readModalAuthor);
     const entry = cachedEntries[ek]||{};
     const reactions = {...(entry.reactions||{})};
+    // 한 사람(loggedInUser)당 하나만 - 기존 리액션 제거 후 새것 추가
+    const myPrevKey = Object.keys(reactions).find(k => reactions[k+'_by'] === loggedInUser);
+    if(myPrevKey) {
+      reactions[myPrevKey] = Math.max(0, (reactions[myPrevKey]||1) - 1);
+      if(reactions[myPrevKey] <= 0) delete reactions[myPrevKey];
+      delete reactions[myPrevKey+'_by'];
+    }
+    // 내 리액션 저장 (emoji -> count, emoji_by -> 누가 눌렀는지)
     reactions[emoji] = (reactions[emoji]||0) + 1;
+    reactions[emoji+'_by'] = loggedInUser;
     const updated = {...entry, reactions};
     await setDoc(doc(db,'entries',ek), updated);
     cachedEntries[ek] = updated;
