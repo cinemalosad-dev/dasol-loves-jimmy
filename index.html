@@ -49,13 +49,36 @@
   .cal-nav:hover { background: var(--surface2); }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
   .cal-dow { font-size: 10px; color: var(--muted); text-align: center; padding-bottom: 5px; }
-  .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; cursor: pointer; transition: background 0.15s; user-select: none; gap: 1px; }
+  .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; cursor: pointer; transition: background 0.15s; user-select: none; gap: 1px; position: relative; }
   .cal-day:hover { background: var(--surface2); }
   .cal-day.empty { cursor: default; } .cal-day.empty:hover { background: none; }
   .cal-day.today { font-weight: 500; color: var(--red); }
   .cal-day.has-date { background: var(--red-light); } .cal-day.has-date:hover { background: #ecd8d0; }
+  .cal-indicators { display: flex; gap: 2px; align-items: center; justify-content: center; min-height: 10px; }
   .cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--red); }
-  .cal-emoji { font-size: 11px; line-height: 1; }
+  .cal-dot.mint { background: var(--mint); }
+  .cal-emoji { font-size: 10px; line-height: 1; }
+
+  /* 날짜 상세 뷰 */
+  .day-detail { background: var(--surface); border: 0.5px solid var(--border); border-radius: 16px; margin-bottom: 1rem; overflow: hidden; }
+  .day-detail-header { padding: 0.875rem 1rem 0.6rem; border-bottom: 0.5px solid var(--border); }
+  .day-detail-date { font-family: var(--serif); font-size: 15px; color: var(--text); }
+  .author-entries { display: flex; flex-direction: column; }
+  .author-entry { padding: 0.875rem 1rem; border-bottom: 0.5px solid var(--border); cursor: pointer; transition: background 0.15s; }
+  .author-entry:last-child { border-bottom: none; }
+  .author-entry:hover { background: var(--surface2); }
+  .author-entry-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem; }
+  .author-name { font-size: 12px; font-weight: 500; }
+  .author-name.dasol { color: var(--red); }
+  .author-name.jimmy { color: var(--mint); }
+  .author-emoji { font-size: 14px; }
+  .author-entry-text { font-size: 13px; color: var(--text); line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+  .author-entry-empty { font-size: 12px; color: var(--muted); font-style: italic; }
+  .author-add-btn { font-size: 12px; color: var(--red); background: none; border: none; cursor: pointer; padding: 0; }
+
+  .entry-list { margin-bottom: 1.5rem; }
+  .no-entries { text-align: center; font-size: 12px; color: var(--muted); padding: 1.25rem 0; }
+  .loading { text-align: center; font-size: 12px; color: var(--muted); padding: 1rem 0; }
 
   /* 모달 */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,36,32,0.45); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
@@ -65,38 +88,23 @@
   .modal-date-label { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
   .modal-section { margin-bottom: 1rem; }
   .modal-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
-
-  /* 작성자 선택 */
-  .author-row { display: flex; gap: 8px; }
-  .author-btn { flex: 1; height: 38px; border: 0.5px solid var(--border); border-radius: 10px; background: none; font-family: var(--sans); font-size: 13px; color: var(--muted); cursor: pointer; transition: all 0.15s; }
-  .author-btn.active { background: var(--red-light); border-color: var(--red); color: var(--red); font-weight: 500; }
-
-  /* 이모티콘 선택 */
   .emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; }
   .emoji-btn { width: 38px; height: 38px; border: 0.5px solid var(--border); border-radius: 10px; background: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
   .emoji-btn:hover { background: var(--surface2); }
   .emoji-btn.active { background: var(--red-light); border-color: var(--red); }
   .emoji-btn.none-btn { font-size: 11px; color: var(--muted); width: auto; padding: 0 10px; }
-
   textarea { width: 100%; font-family: var(--sans); font-size: 14px; padding: 10px 12px; border: 0.5px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); resize: none; outline: none; transition: border-color 0.2s; line-height: 1.6; }
   textarea:focus { border-color: var(--red); }
+  .modal-author-badge { display: inline-block; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 0.25rem; }
+  .modal-author-badge.dasol { background: var(--red-light); color: var(--red); }
+  .modal-author-badge.jimmy { background: var(--mint-light); color: var(--mint); }
   .modal-btn-row { display: flex; gap: 8px; margin-top: 1rem; }
   .btn-cancel { flex: 1; font-family: var(--sans); font-size: 13px; height: 40px; border: 0.5px solid var(--border); border-radius: 10px; background: none; color: var(--muted); cursor: pointer; }
   .btn-cancel:hover { background: var(--surface2); }
   .btn-save { flex: 2; font-family: var(--sans); font-size: 13px; font-weight: 500; height: 40px; border: none; border-radius: 10px; background: var(--red); color: #fff; cursor: pointer; }
+  .btn-save.jimmy-save { background: var(--mint); }
   .btn-save:hover { opacity: 0.88; }
   .btn-delete { font-family: var(--sans); font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; text-decoration: underline; text-align: center; display: block; width: 100%; margin-top: 0.6rem; }
-
-  /* 기록 목록 */
-  .entry-list { margin-bottom: 1.5rem; }
-  .entry-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 0.875rem 1rem; margin-bottom: 0.6rem; cursor: pointer; transition: background 0.15s; }
-  .entry-card:hover { background: var(--surface2); }
-  .entry-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.3rem; }
-  .entry-card-date { font-size: 11px; color: var(--muted); }
-  .entry-card-author { font-size: 11px; font-weight: 500; color: var(--red); }
-  .entry-card-text { font-size: 13px; color: var(--text); line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
-  .no-entries { text-align: center; font-size: 12px; color: var(--muted); padding: 1.25rem 0; }
-  .loading { text-align: center; font-size: 12px; color: var(--muted); padding: 1rem 0; }
   .footer { text-align: center; margin-top: 1.5rem; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
   .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; font-size: 13px; padding: 0.6rem 1.25rem; border-radius: 20px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; }
   .toast.show { opacity: 1; }
@@ -110,7 +118,6 @@
       <span>Dasol</span><span class="heart-icon">♥</span><span>Jimmy</span>
     </div>
   </div>
-
   <div class="dday-row">
     <div class="dday-card">
       <div class="dday-card-label">함께한 시간</div>
@@ -124,20 +131,16 @@
       <div class="dday-today-val" id="today-label">—</div>
     </div>
   </div>
-
   <div class="breakdown-row">
     <div class="bd-card y"><div class="bd-num" id="years">0</div><div class="bd-label">년</div></div>
     <div class="bd-card m"><div class="bd-num" id="months">0</div><div class="bd-label">개월</div></div>
     <div class="bd-card d"><div class="bd-num" id="days-rem">0</div><div class="bd-label">일</div></div>
   </div>
-
   <div class="milestone-card">
     <span class="milestone-left">다음 기념일까지</span>
     <span class="milestone-right" id="next-milestone">—</span>
   </div>
-
   <div class="divider"></div>
-
   <div class="calendar-wrap">
     <div class="section-label">데이트 기록</div>
     <div class="cal-header">
@@ -147,40 +150,29 @@
     </div>
     <div class="cal-grid" id="cal-grid"></div>
   </div>
-
   <div class="entry-list" id="entry-list"></div>
   <div class="footer">made with ♥</div>
 </div>
 
-<!-- 모달 -->
+<!-- 작성 모달 -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <div class="modal-title" id="modal-title">데이트 기록</div>
+    <div class="modal-title" id="modal-title">기록 쓰기</div>
     <div class="modal-date-label" id="modal-date-label"></div>
-
-    <div class="modal-section">
-      <div class="modal-label">작성자</div>
-      <div class="author-row">
-        <button class="author-btn" id="author-dasol" onclick="selectAuthor('Dasol')">Dasol</button>
-        <button class="author-btn" id="author-jimmy" onclick="selectAuthor('Jimmy')">Jimmy</button>
-      </div>
-    </div>
-
+    <div id="modal-author-badge-wrap" style="margin-bottom:0.75rem;"></div>
     <div class="modal-section">
       <div class="modal-label">이모티콘</div>
       <div class="emoji-grid" id="emoji-grid"></div>
     </div>
-
     <div class="modal-section">
       <div class="modal-label">기록</div>
       <textarea id="modal-text" rows="5" placeholder="오늘은 어땠나요?"></textarea>
     </div>
-
     <div class="modal-btn-row">
       <button class="btn-cancel" id="btn-cancel">취소</button>
       <button class="btn-save" id="btn-save">저장</button>
     </div>
-    <button class="btn-delete" id="btn-delete" style="display:none;">이 날 기록 삭제</button>
+    <button class="btn-delete" id="btn-delete" style="display:none;">이 기록 삭제</button>
   </div>
 </div>
 
@@ -203,18 +195,17 @@
   const START_DATE = '2026-01-16';
   const EMOJIS = ['🥰','😍','😊','🥳','😂','😭','🫶','💕','🌸','🍀','☀️','🌙','🎉','🍽️','🎬','☕','🚗','✈️','🏖️','🎁'];
   const DAYS_KO = ['일','월','화','수','목','금','토'];
+  // Firestore key: entries/{dateKey_author} e.g. "2026-05-31_Dasol"
 
   let calYear = new Date().getFullYear();
   let calMonth = new Date().getMonth();
+  let cachedEntries = {}; // key: "YYYY-MM-DD_Author"
   let currentDateKey = null;
-  let cachedEntries = {};
-  let selectedAuthor = null;
+  let currentAuthor = null;
   let selectedEmoji = null;
 
-  // ── 토스트 ──
   function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
-  // ── D+day ──
   function updateDisplay(){
     const s=new Date(START_DATE);s.setHours(0,0,0,0);
     const now=new Date();now.setHours(0,0,0,0);
@@ -234,45 +225,22 @@
     document.getElementById('next-milestone').textContent='D+'+next.ms.toLocaleString()+'까지 '+next.left+'일';
   }
 
-  // ── 이모티콘 그리드 ──
-  function renderEmojiGrid(selected){
-    const grid=document.getElementById('emoji-grid');
-    grid.innerHTML='';
-    // 없음 버튼
-    const noneBtn=document.createElement('button');
-    noneBtn.className='emoji-btn none-btn'+(selected===null?' active':'');
-    noneBtn.textContent='없음';
-    noneBtn.onclick=()=>selectEmoji(null);
-    grid.appendChild(noneBtn);
-    EMOJIS.forEach(e=>{
-      const btn=document.createElement('button');
-      btn.className='emoji-btn'+(selected===e?' active':'');
-      btn.textContent=e;
-      btn.onclick=()=>selectEmoji(e);
-      grid.appendChild(btn);
-    });
-  }
+  function dateKey(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
+  function entryKey(dk,author){return dk+'_'+author;}
+  function getDow(dateStr){return DAYS_KO[new Date(dateStr).getDay()]+'요일';}
 
-  window.selectEmoji=function(e){
-    selectedEmoji=e;
-    renderEmojiGrid(e);
-  }
-
-  window.selectAuthor=function(name){
-    selectedAuthor=name;
-    document.getElementById('author-dasol').classList.toggle('active',name==='Dasol');
-    document.getElementById('author-jimmy').classList.toggle('active',name==='Jimmy');
-  }
-
-  // ── Firestore ──
   async function loadEntries(){
     cachedEntries={};
     const snap=await getDocs(collection(db,'entries'));
     snap.forEach(d=>{cachedEntries[d.id]=d.data();});
   }
 
-  // ── 달력 ──
-  function dateKey(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
+  function getDateEntries(dk){
+    return {
+      Dasol: cachedEntries[entryKey(dk,'Dasol')]||null,
+      Jimmy: cachedEntries[entryKey(dk,'Jimmy')]||null
+    };
+  }
 
   function renderCalendar(){
     const today=new Date();
@@ -284,98 +252,143 @@
     DAYS_KO.forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
     for(let i=0;i<firstDay;i++){const el=document.createElement('div');el.className='cal-day empty';grid.appendChild(el);}
     for(let d=1;d<=dim;d++){
-      const key=dateKey(calYear,calMonth,d);
-      const entry=cachedEntries[key];
+      const dk=dateKey(calYear,calMonth,d);
+      const {Dasol:de,Jimmy:je}=getDateEntries(dk);
+      const hasAny=!!(de||je);
       const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
       const el=document.createElement('div');
-      el.className='cal-day'+(entry?' has-date':'')+(isToday?' today':'');
-      const indicator = entry
-        ? (entry.emoji ? '<div class="cal-emoji">'+entry.emoji+'</div>' : '<div class="cal-dot"></div>')
-        : '<div style="width:4px;height:4px;"></div>';
-      el.innerHTML='<span>'+d+'</span>'+indicator;
-      el.onclick=()=>openModal(calYear,calMonth,d);
+      el.className='cal-day'+(hasAny?' has-date':'')+(isToday?' today':'');
+
+      let indicators='';
+      if(de){indicators+=(de.emoji?'<span class="cal-emoji">'+de.emoji+'</span>':'<span class="cal-dot"></span>');}
+      if(je){indicators+=(je.emoji?'<span class="cal-emoji">'+je.emoji+'</span>':'<span class="cal-dot mint"></span>');}
+
+      el.innerHTML='<span>'+d+'</span><div class="cal-indicators">'+indicators+'</div>';
+      el.onclick=()=>openDayView(calYear,calMonth,d);
       grid.appendChild(el);
     }
     renderEntryList();
   }
 
-  function getDayOfWeek(dateStr){
-    const d=new Date(dateStr);
-    return DAYS_KO[d.getDay()]+'요일';
-  }
-
   function renderEntryList(){
     const list=document.getElementById('entry-list');
     const prefix=calYear+'-'+String(calMonth+1).padStart(2,'0');
-    const keys=Object.keys(cachedEntries).filter(k=>k.startsWith(prefix)).sort().reverse();
-    if(keys.length===0){list.innerHTML='<div class="no-entries">이번 달 데이트 기록이 없어요</div>';return;}
-    list.innerHTML=keys.map(k=>{
-      const e=cachedEntries[k];
-      const[,m,d]=k.split('-');
-      const dow=getDayOfWeek(k);
-      const emojiStr=e.emoji?e.emoji+' ':'';
-      return '<div class="entry-card" data-key="'+k+'">'
-        +'<div class="entry-card-top">'
-        +'<span class="entry-card-date">'+parseInt(m)+'월 '+parseInt(d)+'일 ('+dow+') '+emojiStr+'</span>'
-        +'<span class="entry-card-author">'+(e.author||'')+'</span>'
-        +'</div>'
-        +(e.text?'<div class="entry-card-text">'+e.text.substring(0,100)+(e.text.length>100?'...':'')+'</div>':'')
-        +'</div>';
+    const dayKeys=[...new Set(
+      Object.keys(cachedEntries)
+        .filter(k=>k.startsWith(prefix))
+        .map(k=>k.split('_')[0])
+    )].sort().reverse();
+
+    if(dayKeys.length===0){list.innerHTML='<div class="no-entries">이번 달 데이트 기록이 없어요</div>';return;}
+
+    list.innerHTML=dayKeys.map(dk=>{
+      const {Dasol:de,Jimmy:je}=getDateEntries(dk);
+      const [,m,d]=dk.split('-');
+      const dow=getDow(dk);
+      const dasolHtml=`<div class="author-entry" data-dk="${dk}" data-author="Dasol">
+        <div class="author-entry-top">
+          <span class="author-name dasol">Dasol ${de?.emoji||''}</span>
+        </div>
+        ${de?.text?`<div class="author-entry-text">${de.text.substring(0,80)}${de.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
+      </div>`;
+      const jimmyHtml=`<div class="author-entry" data-dk="${dk}" data-author="Jimmy">
+        <div class="author-entry-top">
+          <span class="author-name jimmy">Jimmy ${je?.emoji||''}</span>
+        </div>
+        ${je?.text?`<div class="author-entry-text">${je.text.substring(0,80)}${je.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
+      </div>`;
+      return `<div class="day-detail">
+        <div class="day-detail-header">
+          <div class="day-detail-date">${parseInt(m)}월 ${parseInt(d)}일 (${dow})</div>
+        </div>
+        <div class="author-entries">${dasolHtml}${jimmyHtml}</div>
+      </div>`;
     }).join('');
-    list.querySelectorAll('.entry-card').forEach(card=>{
-      card.onclick=()=>{const[y,m,d]=card.dataset.key.split('-').map(Number);openModal(y,m-1,d);};
+
+    list.querySelectorAll('.author-entry').forEach(el=>{
+      el.onclick=()=>openModal(el.dataset.dk, el.dataset.author);
     });
   }
 
-  // ── 모달 ──
-  function openModal(y,m,d){
-    currentDateKey=dateKey(y,m,d);
-    const entry=cachedEntries[currentDateKey]||{};
-    const[ky,km,kd]=currentDateKey.split('-');
-    const dow=getDayOfWeek(currentDateKey);
-    document.getElementById('modal-title').textContent=parseInt(kd)+'일의 기록';
+  function openDayView(y,m,d){
+    // 달력 클릭 시 해당 날짜로 스크롤 or 목록에서 찾아서 열기
+    const dk=dateKey(y,m,d);
+    const {Dasol:de,Jimmy:je}=getDateEntries(dk);
+    // 둘 다 없으면 Dasol 모달 바로 열기, 있으면 목록 스크롤
+    if(!de&&!je){
+      openModal(dk,'Dasol');
+    } else {
+      const el=document.querySelector(`.author-entry[data-dk="${dk}"]`);
+      if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+  }
+
+  function openModal(dk, author){
+    currentDateKey=dk;
+    currentAuthor=author;
+    const ek=entryKey(dk,author);
+    const entry=cachedEntries[ek]||{};
+    const[ky,km,kd]=dk.split('-');
+    const dow=getDow(dk);
+    document.getElementById('modal-title').textContent=author+'의 기록';
     document.getElementById('modal-date-label').textContent=ky+'년 '+parseInt(km)+'월 '+parseInt(kd)+'일 ('+dow+')';
+    document.getElementById('modal-author-badge-wrap').innerHTML=`<span class="modal-author-badge ${author.toLowerCase()}">${author}</span>`;
     document.getElementById('modal-text').value=entry.text||'';
-    selectedAuthor=entry.author||null;
     selectedEmoji=entry.emoji||null;
-    // 작성자 버튼
-    document.getElementById('author-dasol').classList.toggle('active',selectedAuthor==='Dasol');
-    document.getElementById('author-jimmy').classList.toggle('active',selectedAuthor==='Jimmy');
     renderEmojiGrid(selectedEmoji);
-    document.getElementById('btn-delete').style.display=cachedEntries[currentDateKey]?'block':'none';
+    document.getElementById('btn-delete').style.display=cachedEntries[ek]?'block':'none';
+    const saveBtn=document.getElementById('btn-save');
+    saveBtn.className='btn-save'+(author==='Jimmy'?' jimmy-save':'');
     document.getElementById('modal').classList.add('open');
   }
 
   function closeModal(){
     document.getElementById('modal').classList.remove('open');
-    currentDateKey=null; selectedAuthor=null; selectedEmoji=null;
+    currentDateKey=null; currentAuthor=null; selectedEmoji=null;
+  }
+
+  function renderEmojiGrid(selected){
+    const grid=document.getElementById('emoji-grid');
+    grid.innerHTML='';
+    const noneBtn=document.createElement('button');
+    noneBtn.className='emoji-btn none-btn'+(selected===null?' active':'');
+    noneBtn.textContent='없음';
+    noneBtn.onclick=()=>{selectedEmoji=null;renderEmojiGrid(null);};
+    grid.appendChild(noneBtn);
+    EMOJIS.forEach(e=>{
+      const btn=document.createElement('button');
+      btn.className='emoji-btn'+(selected===e?' active':'');
+      btn.textContent=e;
+      btn.onclick=()=>{selectedEmoji=e;renderEmojiGrid(e);};
+      grid.appendChild(btn);
+    });
   }
 
   async function saveEntry(){
-    if(!currentDateKey)return;
+    if(!currentDateKey||!currentAuthor)return;
     const text=document.getElementById('modal-text').value.trim();
     if(!text&&!selectedEmoji){closeModal();return;}
-    if(!selectedAuthor){showToast('작성자를 선택해줘요!');return;}
     showToast('저장 중...');
-    const data={text,author:selectedAuthor,emoji:selectedEmoji||null};
-    await setDoc(doc(db,'entries',currentDateKey),data);
-    cachedEntries[currentDateKey]=data;
+    const ek=entryKey(currentDateKey,currentAuthor);
+    const data={text,author:currentAuthor,emoji:selectedEmoji||null};
+    await setDoc(doc(db,'entries',ek),data);
+    cachedEntries[ek]=data;
     closeModal();
     renderCalendar();
     showToast('저장됐어요 ♥');
   }
 
   async function deleteEntry(){
-    if(!currentDateKey||!confirm('이 날의 기록을 삭제할까요?'))return;
+    if(!currentDateKey||!currentAuthor||!confirm('이 기록을 삭제할까요?'))return;
     showToast('삭제 중...');
-    await deleteDoc(doc(db,'entries',currentDateKey));
-    delete cachedEntries[currentDateKey];
+    const ek=entryKey(currentDateKey,currentAuthor);
+    await deleteDoc(doc(db,'entries',ek));
+    delete cachedEntries[ek];
     closeModal();
     renderCalendar();
     showToast('삭제됐어요');
   }
 
-  // ── 이벤트 ──
   document.getElementById('btn-save').onclick=saveEntry;
   document.getElementById('btn-cancel').onclick=closeModal;
   document.getElementById('btn-delete').onclick=deleteEntry;
@@ -383,7 +396,6 @@
   document.getElementById('next-btn').onclick=()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();};
   document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
 
-  // ── 초기화 ──
   updateDisplay();
   document.getElementById('entry-list').innerHTML='<div class="loading">불러오는 중...</div>';
   await loadEntries();
