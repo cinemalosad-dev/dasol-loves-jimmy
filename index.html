@@ -518,10 +518,11 @@
   const EMOJIS = [
     '🥰','😍','💕','💗','💓','🫶','❤️','🩷','💏','😘',
     '😊','🥳','😂','😭','🥹','😌','🤩','😴','🥵','😅',
+    '🫦','😋','😪','🫠','👀','🐣','🐶','🏢','💪','👁️',
     '☀️','🌤️','🌧️','⛈️','❄️','🌙','⭐','🍃','🔥','🏔️',
     '🏃','🧘‍♀️','🏋️','💻','📖','💄','💰','🎵','🎬','🎁',
-    '🍽️','☕','🍵','🍺','🍷','🍰','🍜','🍣','🥂','🍔',
-    '🚗','🏖️','🌸','🍀','🎉','🛍️','🏠','🌿','😇','✨'
+    '🍽️','☕','🍵','🍺','🍷','🍰','🍜','🍣','🥂','🍗',
+    '🚗','🏖️','🌸','🍀','🎉','🛍️','🏠','🌿','🏕️','🎮'
   ];
   const DAYS_KO = ['일','월','화','수','목','금','토'];
   // 비밀번호 설정 (4자리)
@@ -698,7 +699,7 @@
   function renderEntryList(){
     const list=document.getElementById('entry-list');
     const prefix=calYear+'-'+String(calMonth+1).padStart(2,'0');
-    const monthLabel=calYear+'년 '+( calMonth+1)+'월';
+    const monthLabel=calYear+'년 '+(calMonth+1)+'월';
     const dayKeys=[...new Set(
       Object.keys(cachedEntries).filter(k=>k.startsWith(prefix)).map(k=>k.split('_')[0])
     )].sort().reverse();
@@ -707,41 +708,25 @@
       const {Dasol:de,Jimmy:je}=getDateEntries(dk);
       const[,m,d]=dk.split('-');
       const dow=getDow(dk);
-      // 본인 기록만 클릭 가능
-      const dasolClickable = loggedInUser==='Dasol';
-      const jimmyClickable = loggedInUser==='Jimmy';
-      const dasolReadable = loggedInUser==='Jimmy' && !!de;
-      const jimmyReadable = loggedInUser==='Dasol' && !!je;
-      const dasolHtml=`<div class="author-entry${dasolClickable?' clickable':(dasolReadable?' clickable':'')}" data-dk="${dk}" data-author="Dasol" data-mode="${dasolClickable?'edit':(dasolReadable?'read':'')}">
-        <div class="author-entry-top">
-          <span class="author-name dasol">Dasol ${de?.emoji||''}</span>
-          ${dasolClickable?'<span style="font-size:11px;color:var(--muted);">'+(de?'수정':'+ 쓰기')+'</span>':''}
-          ${dasolReadable?'<span style="font-size:11px;color:var(--muted);">자세히 보기</span>':''}
+      const chips=[];
+      if(de) chips.push(`<span class="day-detail-author-chip dasol">Dasol ${de.emoji||''}</span>`);
+      if(je) chips.push(`<span class="day-detail-author-chip jimmy">Jimmy ${je.emoji||''}</span>`);
+      const snippet=((de?.text||je?.text)||'').substring(0,28);
+      return `<div class="day-detail" data-dk="${dk}">
+        <div class="day-detail-left">
+          <div class="day-detail-date">${parseInt(m)}월 ${parseInt(d)}일 (${dow})</div>
+          <div class="day-detail-preview">
+            ${chips.join('')}
+            ${snippet?`<span class="day-detail-snippet">${snippet}…</span>`:''}
+          </div>
         </div>
-        ${de?.text?`<div class="author-entry-text">${de.text.substring(0,80)}${de.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
-        ${(de?.reactions&&Object.keys(de.reactions).length)?`<div class="reaction-bar">${(()=>{const g={};Object.values(de.reactions).forEach(e=>{g[e]=(g[e]||0)+1;});return Object.entries(g).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('');})()}</div>`:''}
-      </div>`;
-      const jimmyHtml=`<div class="author-entry${jimmyClickable?' clickable':(jimmyReadable?' clickable':'')}" data-dk="${dk}" data-author="Jimmy" data-mode="${jimmyClickable?'edit':(jimmyReadable?'read':'')}">
-        <div class="author-entry-top">
-          <span class="author-name jimmy">Jimmy ${je?.emoji||''}</span>
-          ${jimmyClickable?'<span style="font-size:11px;color:var(--muted);">'+(je?'수정':'+ 쓰기')+'</span>':''}
-          ${jimmyReadable?'<span style="font-size:11px;color:var(--muted);">자세히 보기</span>':''}
-        </div>
-        ${je?.text?`<div class="author-entry-text">${je.text.substring(0,80)}${je.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
-        ${(je?.reactions&&Object.keys(je.reactions).length)?`<div class="reaction-bar">${(()=>{const g={};Object.values(je.reactions).forEach(e=>{g[e]=(g[e]||0)+1;});return Object.entries(g).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('');})()}</div>`:''}
-      </div>`;
-      return `<div class="day-detail">
-        <div class="day-detail-header"><div class="day-detail-date">${parseInt(m)}월 ${parseInt(d)}일 (${dow})</div></div>
-        <div class="author-entries">${dasolHtml}${jimmyHtml}</div>
+        <div class="day-detail-arrow">›</div>
       </div>`;
     }).join('');
-    // 본인 기록만 클릭 이벤트
-    list.querySelectorAll('.author-entry.clickable').forEach(el=>{
-      el.onclick=()=>{
-        if(el.dataset.mode==='read') openReadModal(el.dataset.dk, el.dataset.author);
-        else openModal(el.dataset.dk, el.dataset.author);
-      };
+    list.querySelectorAll('.day-detail').forEach(el=>{
+      el.onclick=()=>openDayModal(el.dataset.dk);
     });
+  }
   }
 
   function openDayView(y,m,d){
@@ -813,18 +798,10 @@
 
   function renderReadReactions(reactions) {
     const bar = document.getElementById('read-reaction-bar');
-    // reactions = {Dasol: '❤️', Jimmy: '🔥'} 구조
-    // 같은 이모티콘 그룹핑해서 표시
-    const grouped = {};
-    Object.entries(reactions).forEach(([user, emoji]) => {
-      if(!grouped[emoji]) grouped[emoji] = [];
-      grouped[emoji].push(user);
-    });
-    const myEmoji = reactions[loggedInUser];
-    bar.innerHTML = Object.keys(grouped).length
-      ? Object.entries(grouped).map(([e, users]) =>
-          `<span class="reaction-btn ${users.includes(loggedInUser)?'my-reaction':''}" title="${users.join(', ')}">${e} ${users.length}</span>`
-        ).join('')
+    // reactions = {Dasol: '❤️', Jimmy: '🔥'} 구조 - 이모티콘만 표시
+    const emojis = Object.values(reactions).filter(Boolean);
+    bar.innerHTML = emojis.length
+      ? emojis.map(e => `<span class="reaction-btn">${e}</span>`).join('')
       : '';
   }
 
