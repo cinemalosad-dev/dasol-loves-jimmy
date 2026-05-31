@@ -143,7 +143,18 @@
   .btn-save.jimmy-save { background: var(--mint); }
   .btn-save:hover { opacity: 0.88; }
   .btn-delete { font-family: var(--sans); font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; text-decoration: underline; text-align: center; display: block; width: 100%; margin-top: 0.6rem; }
-  .footer { text-align: center; margin-top: 1.5rem; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
+  .read-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,36,32,0.45); z-index: 110; align-items: center; justify-content: center; padding: 1rem; }
+  .read-modal-overlay.open { display: flex; }
+  .read-modal { background: var(--surface); border-radius: 20px; padding: 1.5rem; width: 100%; max-width: 360px; max-height: 88vh; overflow-y: auto; }
+  .read-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .read-modal-title { font-family: var(--serif); font-size: 18px; color: var(--text); }
+  .read-modal-close { background: none; border: none; font-size: 20px; color: var(--muted); cursor: pointer; line-height: 1; padding: 2px 6px; }
+  .read-modal-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
+  .read-modal-badge { font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; }
+  .read-modal-badge.dasol { background: var(--red-light); color: var(--red); }
+  .read-modal-badge.jimmy { background: var(--mint-light); color: var(--mint); }
+  .read-modal-emoji { font-size: 22px; }
+  .read-modal-text { font-size: 14px; color: var(--text); line-height: 1.8; white-space: pre-wrap; word-break: break-all; }
   .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; font-size: 13px; padding: 0.6rem 1.25rem; border-radius: 20px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; }
   .toast.show { opacity: 1; }
 </style>
@@ -272,6 +283,21 @@
   </div>
 </div>
 
+<!-- 읽기 모달 -->
+<div class="read-modal-overlay" id="read-modal">
+  <div class="read-modal">
+    <div class="read-modal-header">
+      <div class="read-modal-title" id="read-modal-title"></div>
+      <button class="read-modal-close" onclick="closeReadModal()">✕</button>
+    </div>
+    <div class="read-modal-meta">
+      <span class="read-modal-badge" id="read-modal-badge"></span>
+      <span class="read-modal-emoji" id="read-modal-emoji"></span>
+    </div>
+    <div class="read-modal-text" id="read-modal-text"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -289,7 +315,14 @@
   const db = getFirestore(app);
 
   const START_DATE = '2026-01-16';
-  const EMOJIS = ['🥰','😍','😊','🥳','😂','😭','🫶','💕','🌸','🍀','☀️','🌙','🎉','🍽️','🎬','☕','🚗','✈️','🏖️','🎁'];
+  const EMOJIS = [
+    '🥰','😍','💕','💗','💓','🫶','❤️','🩷',
+    '😊','🥳','😂','😭','🥹','😌','🤩','😴','🫠','😅',
+    '☀️','🌤️','🌧️','⛈️','❄️','🌈','🌙','⭐','🌊','🍃',
+    '🏃','🧘','🚴','🏊','🏋️','🤸','🧗','⛹️','🎾','🏸',
+    '🍽️','☕','🍰','🍜','🍣','🥂','🎬','🎵','📚','🎁',
+    '🚗','✈️','🏖️','🎡','🌸','🍀','🎉','🛍️','🏠','🌿'
+  ];
   const DAYS_KO = ['일','월','화','수','목','금','토'];
   // 비밀번호 설정 (4자리)
   const PINS = { Dasol: '0419', Jimmy: '0328' };
@@ -475,17 +508,21 @@
       // 본인 기록만 클릭 가능
       const dasolClickable = loggedInUser==='Dasol';
       const jimmyClickable = loggedInUser==='Jimmy';
-      const dasolHtml=`<div class="author-entry${dasolClickable?' clickable':''}" data-dk="${dk}" data-author="Dasol">
+      const dasolReadable = loggedInUser==='Jimmy' && !!de;
+      const jimmyReadable = loggedInUser==='Dasol' && !!je;
+      const dasolHtml=`<div class="author-entry${dasolClickable?' clickable':(dasolReadable?' clickable':'')}" data-dk="${dk}" data-author="Dasol" data-mode="${dasolClickable?'edit':(dasolReadable?'read':'')}">
         <div class="author-entry-top">
           <span class="author-name dasol">Dasol ${de?.emoji||''}</span>
           ${dasolClickable?'<span style="font-size:11px;color:var(--muted);">'+(de?'수정':'+ 쓰기')+'</span>':''}
+          ${dasolReadable?'<span style="font-size:11px;color:var(--muted);">자세히 보기</span>':''}
         </div>
         ${de?.text?`<div class="author-entry-text">${de.text.substring(0,80)}${de.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
       </div>`;
-      const jimmyHtml=`<div class="author-entry${jimmyClickable?' clickable':''}" data-dk="${dk}" data-author="Jimmy">
+      const jimmyHtml=`<div class="author-entry${jimmyClickable?' clickable':(jimmyReadable?' clickable':'')}" data-dk="${dk}" data-author="Jimmy" data-mode="${jimmyClickable?'edit':(jimmyReadable?'read':'')}">
         <div class="author-entry-top">
           <span class="author-name jimmy">Jimmy ${je?.emoji||''}</span>
           ${jimmyClickable?'<span style="font-size:11px;color:var(--muted);">'+(je?'수정':'+ 쓰기')+'</span>':''}
+          ${jimmyReadable?'<span style="font-size:11px;color:var(--muted);">자세히 보기</span>':''}
         </div>
         ${je?.text?`<div class="author-entry-text">${je.text.substring(0,80)}${je.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
       </div>`;
@@ -496,7 +533,10 @@
     }).join('');
     // 본인 기록만 클릭 이벤트
     list.querySelectorAll('.author-entry.clickable').forEach(el=>{
-      el.onclick=()=>openModal(el.dataset.dk, el.dataset.author);
+      el.onclick=()=>{
+        if(el.dataset.mode==='read') openReadModal(el.dataset.dk, el.dataset.author);
+        else openModal(el.dataset.dk, el.dataset.author);
+      };
     });
   }
 
@@ -510,6 +550,28 @@
       if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
     }
   }
+
+  function openReadModal(dk, author) {
+    const ek = entryKey(dk, author);
+    const entry = cachedEntries[ek]||{};
+    const[ky,km,kd] = dk.split('-');
+    const dow = getDow(dk);
+    document.getElementById('read-modal-title').textContent = parseInt(kd)+'일 '+author+'의 기록';
+    const badge = document.getElementById('read-modal-badge');
+    badge.textContent = author;
+    badge.className = 'read-modal-badge '+author.toLowerCase();
+    document.getElementById('read-modal-emoji').textContent = entry.emoji||'';
+    document.getElementById('read-modal-text').textContent = entry.text||'';
+    document.getElementById('read-modal').classList.add('open');
+  }
+
+  window.closeReadModal = function() {
+    document.getElementById('read-modal').classList.remove('open');
+  }
+
+  document.getElementById('read-modal').addEventListener('click', e=>{
+    if(e.target===document.getElementById('read-modal')) closeReadModal();
+  });
 
   function openModal(dk, author){
     if(author !== loggedInUser) return; // 본인 기록만
