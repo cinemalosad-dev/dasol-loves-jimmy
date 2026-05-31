@@ -126,7 +126,7 @@
   .modal-date-label { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
   .modal-section { margin-bottom: 1rem; }
   .modal-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
-  .emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .emoji-grid { display: flex; flex-wrap: wrap; gap: 5px; max-height: 140px; overflow-y: auto; padding: 4px 2px; }
   .emoji-btn { width: 38px; height: 38px; border: 0.5px solid var(--border); border-radius: 10px; background: none; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
   .emoji-btn:hover { background: var(--surface2); }
   .emoji-btn.active { background: var(--red-light); border-color: var(--red); }
@@ -155,6 +155,14 @@
   .read-modal-badge.jimmy { background: var(--mint-light); color: var(--mint); }
   .read-modal-emoji { font-size: 22px; }
   .read-modal-text { font-size: 14px; color: var(--text); line-height: 1.8; white-space: pre-wrap; word-break: break-all; }
+  .reaction-bar { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .reaction-btn { font-size: 16px; background: var(--surface2); border: none; border-radius: 20px; padding: 3px 8px; cursor: pointer; transition: background 0.15s; }
+  .reaction-btn:hover { background: var(--beige-light); }
+  .reaction-picker { display: none; position: absolute; background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 8px; z-index: 50; flex-wrap: wrap; gap: 4px; width: 200px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .reaction-picker.open { display: flex; }
+  .reaction-pick-btn { font-size: 18px; background: none; border: none; cursor: pointer; padding: 2px; border-radius: 6px; }
+  .reaction-pick-btn:hover { background: var(--surface2); }
+  .add-reaction-btn { font-size: 13px; color: var(--muted); background: var(--surface2); border: none; border-radius: 20px; padding: 3px 8px; cursor: pointer; }
   .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; font-size: 13px; padding: 0.6rem 1.25rem; border-radius: 20px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200; white-space: nowrap; }
   .toast.show { opacity: 1; }
 </style>
@@ -283,6 +291,8 @@
   </div>
 </div>
 
+<button class="scroll-top-btn" id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
 <!-- 읽기 모달 -->
 <div class="read-modal-overlay" id="read-modal">
   <div class="read-modal">
@@ -295,6 +305,11 @@
       <span class="read-modal-emoji" id="read-modal-emoji"></span>
     </div>
     <div class="read-modal-text" id="read-modal-text"></div>
+    <div style="margin-top:1rem;position:relative;">
+      <button class="add-reaction-btn" onclick="toggleReactionPicker()">+ 리액션</button>
+      <div class="reaction-picker" id="reaction-picker"></div>
+    </div>
+    <div class="reaction-bar" id="read-reaction-bar" style="margin-top:8px;"></div>
   </div>
 </div>
 
@@ -316,12 +331,12 @@
 
   const START_DATE = '2026-01-16';
   const EMOJIS = [
-    '🥰','😍','💕','💗','💓','🫶','❤️','🩷',
-    '😊','🥳','😂','😭','🥹','😌','🤩','😴','🫠','😅',
-    '☀️','🌤️','🌧️','⛈️','❄️','🌈','🌙','⭐','🌊','🍃',
-    '🏃','🧘','🚴','🏊','🏋️','🤸','🧗','⛹️','🎾','🏸',
-    '🍽️','☕','🍰','🍜','🍣','🥂','🎬','🎵','📚','🎁',
-    '🚗','✈️','🏖️','🎡','🌸','🍀','🎉','🛍️','🏠','🌿'
+    '🥰','😍','💕','💗','💓','🫶','❤️','🩷','💏','😘',
+    '😊','🥳','😂','😭','🥹','😌','🤩','😴','🥵','😅',
+    '☀️','🌤️','🌧️','⛈️','❄️','🌙','⭐','🍃','🔥','🏔️',
+    '🏃','🧘‍♀️','🏋️','💻','📖','💄','💰','🎵','🎬','🎁',
+    '🍽️','☕','🍵','🍺','🍷','🍰','🍜','🍣','🥂','🍔',
+    '🚗','🏖️','🌸','🍀','🎉','🛍️','🏠','🌿','😇','✨'
   ];
   const DAYS_KO = ['일','월','화','수','목','금','토'];
   // 비밀번호 설정 (4자리)
@@ -497,10 +512,11 @@
   function renderEntryList(){
     const list=document.getElementById('entry-list');
     const prefix=calYear+'-'+String(calMonth+1).padStart(2,'0');
+    const monthLabel=calYear+'년 '+( calMonth+1)+'월';
     const dayKeys=[...new Set(
       Object.keys(cachedEntries).filter(k=>k.startsWith(prefix)).map(k=>k.split('_')[0])
     )].sort().reverse();
-    if(dayKeys.length===0){list.innerHTML='<div class="no-entries">이번 달 데이트 기록이 없어요</div>';return;}
+    if(dayKeys.length===0){list.innerHTML='<div class="no-entries">'+monthLabel+' 데이트 기록이 없어요</div>';return;}
     list.innerHTML=dayKeys.map(dk=>{
       const {Dasol:de,Jimmy:je}=getDateEntries(dk);
       const[,m,d]=dk.split('-');
@@ -517,6 +533,7 @@
           ${dasolReadable?'<span style="font-size:11px;color:var(--muted);">자세히 보기</span>':''}
         </div>
         ${de?.text?`<div class="author-entry-text">${de.text.substring(0,80)}${de.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
+        ${(de?.reactions&&Object.keys(de.reactions).length)?`<div class="reaction-bar">${Object.entries(de.reactions).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')}</div>`:''}
       </div>`;
       const jimmyHtml=`<div class="author-entry${jimmyClickable?' clickable':(jimmyReadable?' clickable':'')}" data-dk="${dk}" data-author="Jimmy" data-mode="${jimmyClickable?'edit':(jimmyReadable?'read':'')}">
         <div class="author-entry-top">
@@ -525,6 +542,7 @@
           ${jimmyReadable?'<span style="font-size:11px;color:var(--muted);">자세히 보기</span>':''}
         </div>
         ${je?.text?`<div class="author-entry-text">${je.text.substring(0,80)}${je.text.length>80?'...':''}</div>`:'<div class="author-entry-empty">아직 기록이 없어요</div>'}
+        ${(je?.reactions&&Object.keys(je.reactions).length)?`<div class="reaction-bar">${Object.entries(je.reactions).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')}</div>`:''}
       </div>`;
       return `<div class="day-detail">
         <div class="day-detail-header"><div class="day-detail-date">${parseInt(m)}월 ${parseInt(d)}일 (${dow})</div></div>
@@ -551,18 +569,55 @@
     }
   }
 
+  let readModalDk = null;
+  let readModalAuthor = null;
+
   function openReadModal(dk, author) {
+    readModalDk = dk; readModalAuthor = author;
     const ek = entryKey(dk, author);
     const entry = cachedEntries[ek]||{};
     const[ky,km,kd] = dk.split('-');
-    const dow = getDow(dk);
     document.getElementById('read-modal-title').textContent = parseInt(kd)+'일 '+author+'의 기록';
     const badge = document.getElementById('read-modal-badge');
     badge.textContent = author;
     badge.className = 'read-modal-badge '+author.toLowerCase();
     document.getElementById('read-modal-emoji').textContent = entry.emoji||'';
     document.getElementById('read-modal-text').textContent = entry.text||'';
+    renderReadReactions(entry.reactions||{});
+    buildReactionPicker();
     document.getElementById('read-modal').classList.add('open');
+  }
+
+  function renderReadReactions(reactions) {
+    const bar = document.getElementById('read-reaction-bar');
+    bar.innerHTML = Object.keys(reactions).length
+      ? Object.entries(reactions).map(([e,c])=>`<span class="reaction-btn">${e} ${c}</span>`).join('')
+      : '';
+  }
+
+  function buildReactionPicker() {
+    const picker = document.getElementById('reaction-picker');
+    picker.innerHTML = EMOJIS.slice(0,20).map(e=>
+      `<button class="reaction-pick-btn" onclick="addReaction('${e}')">${e}</button>`
+    ).join('');
+  }
+
+  window.toggleReactionPicker = function() {
+    document.getElementById('reaction-picker').classList.toggle('open');
+  }
+
+  window.addReaction = async function(emoji) {
+    if(!readModalDk||!readModalAuthor) return;
+    document.getElementById('reaction-picker').classList.remove('open');
+    const ek = entryKey(readModalDk, readModalAuthor);
+    const entry = cachedEntries[ek]||{};
+    const reactions = {...(entry.reactions||{})};
+    reactions[emoji] = (reactions[emoji]||0) + 1;
+    const updated = {...entry, reactions};
+    await setDoc(doc(db,'entries',ek), updated);
+    cachedEntries[ek] = updated;
+    renderReadReactions(reactions);
+    renderCalendar();
   }
 
   window.closeReadModal = function() {
@@ -636,6 +691,12 @@
     closeModal(); renderCalendar();
     showToast('삭제됐어요');
   }
+
+  // 스크롤 위로가기
+  window.addEventListener('scroll', ()=>{
+    const btn = document.getElementById('scroll-top-btn');
+    if(btn) btn.classList.toggle('visible', window.scrollY > 300);
+  });
 
   document.getElementById('btn-save').onclick=saveEntry;
   document.getElementById('btn-cancel').onclick=closeModal;
