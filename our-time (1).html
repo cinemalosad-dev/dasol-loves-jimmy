@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Time</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F2EFE9;
+    --surface: #FAFAF7;
+    --surface2: #EAE6DF;
+    --text: #2A2420;
+    --muted: #9A948A;
+    --border: rgba(42,36,32,0.1);
+    --red: #D94F2A;
+    --red-light: #F5E8E3;
+    --mint: #7EB8A4;
+    --mint-light: #E6F2EE;
+    --beige: #B5A898;
+    --beige-light: #EDE8E2;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 1.5rem 1rem; }
+  .app { width: 100%; max-width: 400px; }
+
+  .header { text-align: center; margin-bottom: 1.25rem; }
+  .app-label { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+  .couple-line { font-family: var(--serif); font-size: 22px; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .heart-icon { color: var(--red); font-size: 16px; animation: pulse 2.4s ease-in-out infinite; display: inline-block; }
+  @keyframes pulse { 0%,100%{transform:scale(1);}50%{transform:scale(1.2);} }
+
+  .dday-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .dday-card { background: var(--red-light); border-radius: 14px; padding: 0.875rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .dday-card-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--red); margin-bottom: 4px; }
+  .dday-card-num { font-family: var(--serif); font-size: 38px; color: var(--text); line-height: 1; letter-spacing: -1px; }
+  .dday-card-prefix { font-size: 14px; color: var(--red); font-weight: 500; }
+  .dday-today { background: var(--beige-light); border-radius: 14px; padding: 0.875rem 1rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .dday-today-label { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+  .dday-today-val { font-size: 13px; font-weight: 500; color: var(--text); text-align: center; line-height: 1.4; }
+
+  .breakdown-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+  .bd-card { border-radius: 12px; padding: 0.6rem 0.4rem; text-align: center; }
+  .bd-card.y { background: var(--mint-light); }
+  .bd-card.m { background: var(--beige-light); }
+  .bd-card.d { background: var(--red-light); }
+  .bd-num { font-family: var(--serif); font-size: 22px; line-height: 1; }
+  .bd-card.y .bd-num { color: var(--mint); }
+  .bd-card.m .bd-num { color: var(--beige); }
+  .bd-card.d .bd-num { color: var(--red); }
+  .bd-label { font-size: 10px; margin-top: 2px; }
+  .bd-card.y .bd-label { color: var(--mint); }
+  .bd-card.m .bd-label { color: var(--beige); }
+  .bd-card.d .bd-label { color: var(--red); }
+
+  .milestone-card { background: var(--red-light); border-radius: 12px; padding: 0.7rem 1rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+  .milestone-left { font-size: 12px; color: var(--red); }
+  .milestone-right { font-size: 12px; font-weight: 500; color: var(--red); }
+
+  .divider { height: 0.5px; background: var(--border); margin-bottom: 1.25rem; }
+  .section-label { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.75rem; }
+
+  .calendar-wrap { margin-bottom: 1.5rem; }
+  .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+  .cal-title { font-family: var(--serif); font-size: 16px; color: var(--text); }
+  .cal-nav { background: none; border: 0.5px solid var(--border); border-radius: 8px; width: 30px; height: 30px; cursor: pointer; font-size: 13px; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+  .cal-nav:hover { background: var(--surface2); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-dow { font-size: 10px; color: var(--muted); text-align: center; padding-bottom: 5px; }
+  .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; cursor: pointer; transition: background 0.15s; user-select: none; gap: 1px; }
+  .cal-day:hover { background: var(--surface2); }
+  .cal-day.empty { cursor: default; }
+  .cal-day.empty:hover { background: none; }
+  .cal-day.today { font-weight: 500; color: var(--red); }
+  .cal-day.has-date { background: var(--red-light); }
+  .cal-day.has-date:hover { background: #ecd8d0; }
+  .cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--red); }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(42,36,32,0.45); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border-radius: 20px; padding: 1.5rem; width: 100%; max-width: 360px; max-height: 88vh; overflow-y: auto; }
+  .modal-title { font-family: var(--serif); font-size: 18px; margin-bottom: 0.2rem; }
+  .modal-date-label { font-size: 12px; color: var(--muted); margin-bottom: 1rem; }
+  .modal-section { margin-bottom: 1rem; }
+  .modal-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+  textarea { width: 100%; font-family: var(--sans); font-size: 14px; padding: 10px 12px; border: 0.5px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); resize: none; outline: none; transition: border-color 0.2s; line-height: 1.6; }
+  textarea:focus { border-color: var(--red); }
+  .photo-upload-area { border: 1px dashed var(--border); border-radius: 10px; padding: 1rem; text-align: center; cursor: pointer; transition: background 0.15s; }
+  .photo-upload-area:hover { background: var(--surface2); }
+  .photo-upload-text { font-size: 13px; color: var(--muted); }
+  .photo-preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+  .photo-thumb { aspect-ratio: 1; border-radius: 8px; object-fit: cover; width: 100%; cursor: pointer; }
+  .modal-btn-row { display: flex; gap: 8px; margin-top: 1rem; }
+  .btn-cancel { flex: 1; font-family: var(--sans); font-size: 13px; height: 40px; border: 0.5px solid var(--border); border-radius: 10px; background: none; color: var(--muted); cursor: pointer; }
+  .btn-cancel:hover { background: var(--surface2); }
+  .btn-save { flex: 2; font-family: var(--sans); font-size: 13px; font-weight: 500; height: 40px; border: none; border-radius: 10px; background: var(--red); color: #fff; cursor: pointer; }
+  .btn-save:hover { opacity: 0.88; }
+  .btn-delete { font-family: var(--sans); font-size: 12px; color: var(--muted); background: none; border: none; cursor: pointer; text-decoration: underline; text-align: center; display: block; width: 100%; margin-top: 0.6rem; }
+  input[type="file"] { display: none; }
+
+  .entry-list { margin-bottom: 1.5rem; }
+  .entry-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 0.875rem 1rem; margin-bottom: 0.6rem; cursor: pointer; transition: background 0.15s; }
+  .entry-card:hover { background: var(--surface2); }
+  .entry-card-date { font-size: 11px; color: var(--muted); margin-bottom: 0.25rem; }
+  .entry-card-text { font-size: 13px; color: var(--text); line-height: 1.5; white-space: pre-wrap; word-break: break-all; }
+  .entry-photos { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+  .entry-photo-thumb { width: 52px; height: 52px; border-radius: 7px; object-fit: cover; }
+  .no-entries { text-align: center; font-size: 12px; color: var(--muted); padding: 1.25rem 0; }
+  .footer { text-align: center; margin-top: 1.5rem; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="app-label">our time</div>
+    <div class="couple-line">
+      <span>Dasol</span>
+      <span class="heart-icon">♥</span>
+      <span>Jimmy</span>
+    </div>
+  </div>
+
+  <div class="dday-row">
+    <div class="dday-card">
+      <div class="dday-card-label">함께한 시간</div>
+      <div style="display:flex;align-items:baseline;gap:3px;">
+        <span class="dday-card-prefix">D+</span>
+        <span class="dday-card-num" id="dday">0</span>
+      </div>
+    </div>
+    <div class="dday-today">
+      <div class="dday-today-label">오늘</div>
+      <div class="dday-today-val" id="today-label">—</div>
+    </div>
+  </div>
+
+  <div class="breakdown-row">
+    <div class="bd-card y"><div class="bd-num" id="years">0</div><div class="bd-label">년</div></div>
+    <div class="bd-card m"><div class="bd-num" id="months">0</div><div class="bd-label">개월</div></div>
+    <div class="bd-card d"><div class="bd-num" id="days-rem">0</div><div class="bd-label">일</div></div>
+  </div>
+
+  <div class="milestone-card">
+    <span class="milestone-left">다음 기념일까지</span>
+    <span class="milestone-right" id="next-milestone">—</span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="calendar-wrap">
+    <div class="section-label">데이트 기록</div>
+    <div class="cal-header">
+      <button class="cal-nav" onclick="changeMonth(-1)">&#8592;</button>
+      <div class="cal-title" id="cal-title"></div>
+      <button class="cal-nav" onclick="changeMonth(1)">&#8594;</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+
+  <div class="entry-list" id="entry-list"></div>
+
+  <div class="footer">made with ♥</div>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">데이트 기록</div>
+    <div class="modal-date-label" id="modal-date-label"></div>
+    <div class="modal-section">
+      <div class="modal-label">기록</div>
+      <textarea id="modal-text" rows="4" placeholder="오늘은 어땠나요?"></textarea>
+    </div>
+    <div class="modal-section">
+      <div class="modal-label">사진</div>
+      <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()">
+        <div class="photo-upload-text">+ 사진 추가</div>
+      </div>
+      <input type="file" id="photo-input" accept="image/*" multiple onchange="handlePhotos(event)" />
+      <div class="photo-preview" id="photo-preview"></div>
+    </div>
+    <div class="modal-btn-row">
+      <button class="btn-cancel" onclick="closeModal()">취소</button>
+      <button class="btn-save" onclick="saveEntry()">저장</button>
+    </div>
+    <button class="btn-delete" id="btn-delete" onclick="deleteEntry()" style="display:none;">이 날 기록 삭제</button>
+  </div>
+</div>
+
+<script>
+  const START_DATE = '2026-01-16';
+  let calYear = new Date().getFullYear();
+  let calMonth = new Date().getMonth();
+  let currentDateKey = null;
+  let pendingPhotos = [];
+
+  function getEntries(){try{return JSON.parse(localStorage.getItem('date_entries')||'{}');}catch(e){return{};}}
+  function saveEntries(obj){localStorage.setItem('date_entries',JSON.stringify(obj));}
+  function dateKey(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
+
+  function calcDday(s){const a=new Date(s);a.setHours(0,0,0,0);const b=new Date();b.setHours(0,0,0,0);return Math.floor((b-a)/86400000);}
+  function calcBreakdown(s){const a=new Date(s),b=new Date();let y=b.getFullYear()-a.getFullYear(),m=b.getMonth()-a.getMonth(),d=b.getDate()-a.getDate();if(d<0){m--;d+=new Date(b.getFullYear(),b.getMonth(),0).getDate();}if(m<0){y--;m+=12;}return{y,m,d};}
+  function nextMilestone(days){const ms=[100,200,300,365,500,600,700,730,1000,1100,1200,1300,1460,1500,2000,2500,3000];for(const m of ms){if(m>days)return{ms:m,left:m-days};}const n=Math.ceil(days/1000)*1000+1000;return{ms:n,left:n-days};}
+
+  function updateDisplay(){
+    const d=calcDday(START_DATE),bd=calcBreakdown(START_DATE),ms=nextMilestone(d);
+    const today=new Date();
+    document.getElementById('dday').textContent=d.toLocaleString();
+    document.getElementById('today-label').textContent=today.toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'short'});
+    document.getElementById('years').textContent=bd.y;
+    document.getElementById('months').textContent=bd.m;
+    document.getElementById('days-rem').textContent=bd.d;
+    document.getElementById('next-milestone').textContent='D+'+ms.ms.toLocaleString()+'까지 '+ms.left+'일';
+  }
+
+  function renderCalendar(){
+    const entries=getEntries(),today=new Date();
+    const firstDay=new Date(calYear,calMonth,1).getDay();
+    const dim=new Date(calYear,calMonth+1,0).getDate();
+    const grid=document.getElementById('cal-grid');
+    document.getElementById('cal-title').textContent=calYear+'년 '+(calMonth+1)+'월';
+    grid.innerHTML='';
+    ['일','월','화','수','목','금','토'].forEach(d=>{const el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
+    for(let i=0;i<firstDay;i++){const el=document.createElement('div');el.className='cal-day empty';grid.appendChild(el);}
+    for(let d=1;d<=dim;d++){
+      const key=dateKey(calYear,calMonth,d);
+      const hasEntry=!!entries[key];
+      const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
+      const el=document.createElement('div');
+      el.className='cal-day'+(hasEntry?' has-date':'')+(isToday?' today':'');
+      el.innerHTML='<span>'+d+'</span>'+(hasEntry?'<div class="cal-dot"></div>':'<div style="width:4px;height:4px;"></div>');
+      el.onclick=()=>openModal(calYear,calMonth,d);
+      grid.appendChild(el);
+    }
+    renderEntryList();
+  }
+
+  function renderEntryList(){
+    const entries=getEntries(),list=document.getElementById('entry-list');
+    const keys=Object.keys(entries).filter(k=>{const[y,m]=k.split('-').map(Number);return y===calYear&&m===calMonth+1;}).sort().reverse();
+    if(keys.length===0){list.innerHTML='<div class="no-entries">이번 달 데이트 기록이 없어요</div>';return;}
+    list.innerHTML=keys.map(k=>{
+      const e=entries[k],[y,m,d]=k.split('-');
+      const photos=(e.photos||[]).map(p=>'<img class="entry-photo-thumb" src="'+p+'" />').join('');
+      return '<div class="entry-card" onclick="openModalByKey(\''+k+'\')">'
+        +'<div class="entry-card-date">'+parseInt(m)+'월 '+parseInt(d)+'일</div>'
+        +(e.text?'<div class="entry-card-text">'+e.text.substring(0,80)+(e.text.length>80?'...':'')+'</div>':'')
+        +(photos?'<div class="entry-photos">'+photos+'</div>':'')
+        +'</div>';
+    }).join('');
+  }
+
+  function openModal(y,m,d){
+    currentDateKey=dateKey(y,m,d);
+    const entries=getEntries(),entry=entries[currentDateKey]||{};
+    const[ky,km,kd]=currentDateKey.split('-');
+    document.getElementById('modal-title').textContent=parseInt(kd)+'일의 기록';
+    document.getElementById('modal-date-label').textContent=ky+'년 '+parseInt(km)+'월 '+parseInt(kd)+'일';
+    document.getElementById('modal-text').value=entry.text||'';
+    pendingPhotos=entry.photos?[...entry.photos]:[];
+    renderPhotoPreview();
+    document.getElementById('btn-delete').style.display=entries[currentDateKey]?'block':'none';
+    document.getElementById('modal').classList.add('open');
+  }
+  function openModalByKey(key){const[y,m,d]=key.split('-').map(Number);openModal(y,m-1,d);}
+  function closeModal(){document.getElementById('modal').classList.remove('open');currentDateKey=null;pendingPhotos=[];document.getElementById('photo-preview').innerHTML='';}
+  function handlePhotos(e){Array.from(e.target.files).forEach(file=>{const r=new FileReader();r.onload=ev=>{pendingPhotos.push(ev.target.result);renderPhotoPreview();};r.readAsDataURL(file);});e.target.value='';}
+  function renderPhotoPreview(){document.getElementById('photo-preview').innerHTML=pendingPhotos.map((src,i)=>'<img class="photo-thumb" src="'+src+'" onclick="removePhoto('+i+')" title="클릭하면 삭제" />').join('');}
+  function removePhoto(i){pendingPhotos.splice(i,1);renderPhotoPreview();}
+  function saveEntry(){
+    if(!currentDateKey)return;
+    const text=document.getElementById('modal-text').value.trim();
+    if(!text&&pendingPhotos.length===0){closeModal();return;}
+    const entries=getEntries();entries[currentDateKey]={text,photos:pendingPhotos};saveEntries(entries);closeModal();renderCalendar();
+  }
+  function deleteEntry(){
+    if(!currentDateKey||!confirm('이 날의 기록을 삭제할까요?'))return;
+    const entries=getEntries();delete entries[currentDateKey];saveEntries(entries);closeModal();renderCalendar();
+  }
+  function changeMonth(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+
+  updateDisplay();
+  renderCalendar();
+  document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+</script>
+</body>
+</html>
