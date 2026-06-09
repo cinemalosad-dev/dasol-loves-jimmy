@@ -8,7 +8,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="케미">
 <meta name="theme-color" content="#F9DC7A">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Fredoka:wght@500;600&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<!-- Pretendard (한글+영어 통합 폰트) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<!-- Fredoka (KEMI 로고 전용) + DM Serif Display (D+day 숫자 장식용) -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -30,7 +33,7 @@
   --mint:    #88D4C4; --mint-l:   #DDF5F0;
 
   --serif:'DM Serif Display',Georgia,serif;
-  --sans:'DM Sans',sans-serif;
+  --sans:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif;
   --r: 20px;
   --r-lg: 28px;
   --nav: 68px;
@@ -428,6 +431,130 @@ textarea.input{resize:vertical;min-height:80px}
 .pb-safe{padding-bottom:20px;flex-shrink:0}
 
 /* ════════════════════════════════════════
+   TODAY'S MOOD
+════════════════════════════════════════ */
+.mood-overlay{
+  position:fixed;inset:0;background:rgba(44,36,32,.3);
+  z-index:299;opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.mood-overlay.open{opacity:1;pointer-events:auto}
+.mood-sheet{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--surface);border-radius:28px 28px 0 0;
+  padding:18px 20px 44px;z-index:300;
+  transform:translateY(105%);
+  transition:transform .38s cubic-bezier(.34,1.05,.64,1);
+  max-width:430px;margin:0 auto;
+  box-shadow:0 -4px 32px rgba(44,36,32,.12);
+}
+.mood-sheet.open{transform:translateY(0)}
+.mood-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;margin-top:16px;
+}
+.mood-btn{
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  padding:18px 12px;border-radius:20px;
+  background:var(--surface2);border:2.5px solid transparent;
+  cursor:pointer;transition:all .16s;
+}
+.mood-btn:active{transform:scale(.94)}
+.mood-btn.selected{border-color:var(--yellow);background:var(--yellow-l)}
+.mood-emoji-big{font-size:34px}
+.mood-label-txt{font-size:13px;font-weight:600;color:var(--text)}
+/* 커플카드 기분 표시 */
+.couple-mood-badge{
+  font-size:18px;margin-top:2px;min-height:22px;display:block;
+  animation:pop-in .3s cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ════════════════════════════════════════
+   NICKNAME SETUP
+════════════════════════════════════════ */
+#screen-nickname{bottom:0!important;align-items:center;justify-content:center}
+.nickname-wrap{width:100%;max-width:380px;padding:0 28px;display:flex;flex-direction:column;align-items:center;text-align:center}
+
+/* ════════════════════════════════════════
+   COUPLE CARD (홈 상단)
+════════════════════════════════════════ */
+.couple-card{
+  display:flex;align-items:center;
+  background:var(--surface);border-radius:var(--r-lg);
+  padding:16px 20px;margin:52px 16px 4px;
+  box-shadow:0 2px 12px rgba(44,36,32,.05);
+}
+.couple-person{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.couple-avatar-circle{
+  width:54px;height:54px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:28px;
+  box-shadow:0 2px 8px rgba(44,36,32,.08);
+}
+.couple-name-txt{font-size:13px;font-weight:700;color:var(--text)}
+.couple-type-txt{font-size:10px;color:var(--muted);font-weight:600;text-align:center}
+.couple-center{
+  display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 12px;
+}
+.couple-heart-icon{font-size:22px}
+.couple-dday-label{font-family:var(--serif);font-size:13px;color:var(--muted)}
+
+/* ════════════════════════════════════════
+   PERSONALITY QUIZ (토스 스타일)
+════════════════════════════════════════ */
+#screen-quiz{bottom:0!important;background:var(--bg)}
+.quiz-top{
+  padding:54px 20px 0;display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.quiz-back{
+  width:38px;height:38px;border-radius:50%;background:var(--surface2);
+  border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.quiz-prog-wrap{flex:1;height:6px;background:var(--surface2);border-radius:100px;overflow:hidden}
+.quiz-prog-fill{height:100%;border-radius:100px;background:var(--yellow);transition:width .4s ease}
+.quiz-prog-label{font-size:12px;color:var(--muted);font-weight:600;flex-shrink:0}
+.quiz-body{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  padding:0 24px;overflow:hidden;
+}
+.quiz-emoji-big{font-size:48px;margin-bottom:16px;display:block}
+.quiz-question{
+  font-family:var(--sans);font-weight:800;font-size:26px;
+  line-height:1.35;margin-bottom:32px;color:var(--text);white-space:pre-line;
+}
+.quiz-options{display:flex;flex-direction:column;gap:12px}
+.quiz-option{
+  display:flex;align-items:center;gap:14px;
+  padding:18px 20px;border-radius:20px;
+  background:var(--surface);border:2.5px solid transparent;
+  cursor:pointer;transition:all .18s;text-align:left;
+  box-shadow:0 2px 12px rgba(44,36,32,.05);
+}
+.quiz-option:active{transform:scale(.97)}
+.quiz-option.selected{border-color:var(--yellow);background:var(--yellow-l)}
+.quiz-opt-emoji{font-size:26px;flex-shrink:0}
+.quiz-opt-text{font-size:15px;font-weight:600;line-height:1.4;color:var(--text);white-space:pre-line}
+/* 결과 화면 */
+.quiz-result-wrap{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:0 28px;text-align:center;
+}
+.quiz-result-emoji{font-size:80px;margin-bottom:12px;animation:pop-in .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop-in{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.quiz-result-type{font-family:var(--sans);font-weight:800;font-size:28px;margin-bottom:8px}
+.quiz-result-name{font-size:16px;color:var(--muted);margin-bottom:20px}
+.quiz-result-desc{
+  font-size:14px;line-height:1.9;color:var(--text);
+  background:var(--surface);border-radius:20px;padding:20px 22px;
+  margin-bottom:32px;box-shadow:0 2px 12px rgba(44,36,32,.05);
+  white-space:pre-line;text-align:center;
+}
+/* 슬라이드 애니메이션 */
+@keyframes q-slide-in{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes q-slide-out{from{transform:translateX(0);opacity:1}to{transform:translateX(-60px);opacity:0}}
+.q-in{animation:q-slide-in .28s ease both}
+.q-out{animation:q-slide-out .28s ease both}
+
+/* ════════════════════════════════════════
    INVITE / COUPLE CONNECT
 ════════════════════════════════════════ */
 #screen-invite{bottom:0!important;overflow-y:auto;align-items:center;justify-content:flex-start}
@@ -469,7 +596,7 @@ textarea.input{resize:vertical;min-height:80px}
 }
 .ob-art{width:100%;height:290px;margin-bottom:8px;flex-shrink:0;display:block}
 .ob-title{
-  font-family:'Nunito','Apple SD Gothic Neo',var(--sans);font-weight:900;
+  font-family:var(--sans);font-weight:800;
   font-size:24px;text-align:center;
   line-height:1.45;margin-bottom:10px;color:var(--text);
 }
@@ -801,11 +928,32 @@ textarea.input{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<!-- ════ NICKNAME SETUP ════ -->
+<div id="screen-nickname" class="screen no-nav">
+  <div class="nickname-wrap">
+    <div style="font-size:60px;margin-bottom:16px">👋</div>
+    <h2 style="font-family:var(--sans);font-weight:800;font-size:24px;margin-bottom:8px">어떻게 불러드릴까요?</h2>
+    <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:36px">앱에서 사용할 닉네임을 설정해주세요<br>나중에 프로필에서 바꿀 수 있어요</p>
+    <input class="input" id="nickname-input" placeholder="닉네임 입력" style="text-align:center;font-size:18px;font-weight:600;padding:16px;margin-bottom:16px" maxlength="12">
+    <button class="btn btn-yellow btn-full" onclick="saveNickname()" style="font-size:15px;padding:15px">계속하기 →</button>
+  </div>
+</div>
+
+<!-- ════ PERSONALITY QUIZ ════ -->
+<div id="screen-quiz" class="screen no-nav">
+  <div class="quiz-top">
+    <button class="quiz-back" id="quiz-back-btn" onclick="quizBack()">←</button>
+    <div class="quiz-prog-wrap"><div class="quiz-prog-fill" id="quiz-prog-fill"></div></div>
+    <span class="quiz-prog-label" id="quiz-prog-label">1 / 5</span>
+  </div>
+  <div class="quiz-body" id="quiz-body"></div>
+</div>
+
 <!-- ════ INVITE / COUPLE CONNECT ════ -->
 <div id="screen-invite" class="screen no-nav">
   <div class="invite-wrap" id="invite-wrap">
     <div style="font-size:32px;margin-bottom:8px">🔗</div>
-    <h2 style="font-family:'Nunito',var(--sans);font-weight:900;font-size:22px;margin-bottom:6px;text-align:center">파트너와 연결해요</h2>
+    <h2 style="font-family:var(--sans);font-weight:800;font-size:22px;margin-bottom:6px;text-align:center">파트너와 연결해요</h2>
     <p style="font-size:13px;color:var(--muted);text-align:center;margin-bottom:24px;line-height:1.7">아래 코드를 파트너에게 공유하거나<br>파트너의 코드를 입력해주세요</p>
 
     <!-- 내 코드 -->
@@ -909,12 +1057,27 @@ textarea.input{resize:vertical;min-height:80px}
 
 <!-- ════ DASHBOARD ════ -->
 <div id="screen-dashboard" class="screen">
-  <div class="dash-top">
-    <div>
-      <div class="dash-greeting" id="dash-greeting">안녕 💕</div>
-      <div class="dash-date-txt" id="dash-date"></div>
+  <!-- 커플 카드 -->
+  <div class="couple-card">
+    <div class="couple-person">
+      <div class="couple-avatar-circle" id="my-avatar-circle" style="background:var(--yellow-l)">💕</div>
+      <div class="couple-name-txt" id="my-name-card">나</div>
+      <div class="couple-type-txt" id="my-type-card"></div>
+      <span class="couple-mood-badge" id="my-mood-badge"></span>
     </div>
-    <button class="dash-avatar-btn" id="dash-avatar" onclick="goScreen('screen-profile');initProfileSetup()">🌸</button>
+    <div class="couple-center">
+      <div class="couple-heart-icon">💕</div>
+      <div class="couple-dday-label" id="couple-dday-card">D+1</div>
+    </div>
+    <div class="couple-person">
+      <div class="couple-avatar-circle" id="partner-avatar-circle" style="background:var(--pink-l)">💕</div>
+      <div class="couple-name-txt" id="partner-name-card">파트너</div>
+      <div class="couple-type-txt" id="partner-type-card"></div>
+      <span class="couple-mood-badge" id="partner-mood-badge"></span>
+    </div>
+  </div>
+  <div style="padding:8px 20px 0;flex-shrink:0">
+    <div class="dash-date-txt" id="dash-date"></div>
   </div>
 
   <!-- Circular D+day ring -->
@@ -1159,6 +1322,20 @@ textarea.input{resize:vertical;min-height:80px}
   </button>
 </div>
 
+<!-- ════ TODAY'S MOOD SHEET ════ -->
+<div class="mood-overlay" id="mood-overlay" onclick="closeMoodSheet()"></div>
+<div class="mood-sheet" id="mood-sheet">
+  <div style="width:40px;height:5px;background:var(--border);border-radius:3px;margin:0 auto 18px"></div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <div style="font-size:17px;font-weight:700">오늘 기분이 어때요? 💭</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px" id="mood-date-txt"></div>
+    </div>
+    <button onclick="closeMoodSheet()" style="background:var(--surface2);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--muted);flex-shrink:0">✕</button>
+  </div>
+  <div class="mood-grid" id="mood-grid"></div>
+</div>
+
 <!-- ════ MODAL ════ -->
 <div id="modal-overlay" class="modal-overlay" onclick="maybeCloseModal(event)">
   <div class="modal-sheet" onclick="event.stopPropagation()">
@@ -1253,10 +1430,24 @@ async function onLogin(){
       localStorage.setItem('kemi_start_date',S.startDate);
     }
   }
+  // 파트너 프로필 (러브타입 포함) 로드
+  if(S.partnerUid){
+    const pd=await db.collection('users').doc(S.partnerUid).get();
+    S.partnerProfile=pd.exists?pd.data():{};
+  }
+  // 퀴즈 안 했으면 퀴즈로 (localStorage 기준)
+  if(!localStorage.getItem('kemi_love_type')){
+    startQuiz(); return;
+  }
+  // localStorage에서 러브타입 복원
+  if(localStorage.getItem('kemi_love_type')){
+    S.profile.loveTypeKey=localStorage.getItem('kemi_love_type');
+    S.profile.loveTypeLabel=localStorage.getItem('kemi_love_type_label');
+    S.profile.loveTypeEmoji=localStorage.getItem('kemi_love_type_emoji');
+  }
   document.getElementById('nav-bar').classList.add('visible');
   loadData();
-  if(!S.profile.mbti&&!S.profile.attachment){goScreen('screen-profile');initProfileSetup();}
-  else{goNav('dashboard');}
+  goNav('dashboard');
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1301,8 +1492,20 @@ function refresh(){
 ══════════════════════════════════════════════════════ */
 function initDashboard(){
   const av=S.myAvatar||'💕', nm=S.myName||S.user||'나';
-  document.getElementById('dash-avatar').textContent=av;
-  document.getElementById('dash-greeting').textContent=`안녕, ${nm} 💕`;
+  const loveLabel=S.profile?.loveTypeLabel||localStorage.getItem('kemi_love_type_label')||'';
+  const loveEmoji=S.profile?.loveTypeEmoji||localStorage.getItem('kemi_love_type_emoji')||'';
+  // 커플 카드 업데이트
+  document.getElementById('my-avatar-circle').textContent=av;
+  document.getElementById('my-name-card').textContent=nm;
+  document.getElementById('my-type-card').textContent=loveLabel?`${loveEmoji} ${loveLabel}`:'';
+  document.getElementById('couple-dday-card').textContent=`D+${diff}`;
+
+  // 파트너 정보
+  const partnerLoveLabel=S.partnerProfile?.loveTypeLabel||'';
+  const partnerLoveEmoji=S.partnerProfile?.loveTypeEmoji||'';
+  document.getElementById('partner-name-card').textContent=S.partnerName||'파트너';
+  document.getElementById('partner-avatar-circle').textContent=S.partnerAvatar||'💕';
+  document.getElementById('partner-type-card').textContent=partnerLoveLabel?`${partnerLoveEmoji} ${partnerLoveLabel}`:'';
   const now=new Date();
   const wk=['일','월','화','수','목','금','토'];
   document.getElementById('dash-date').textContent=`${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 ${wk[now.getDay()]}요일`;
@@ -1345,6 +1548,7 @@ function initDashboard(){
   renderAnniversaries(diff, start, now);
   renderRecent();
   genDashAI(diff, met.length, rate);
+  checkDailyMood();
 }
 
 function getMetDates(){ const s=new Set(); Object.values(S.entries).forEach(e=>{ if(e.met&&e.date)s.add(e.date); }); return Array.from(s); }
@@ -1745,6 +1949,238 @@ function skipOnboarding(){
 })();
 
 /* ══════════════════════════════════════════════════════
+   오늘의 기분
+══════════════════════════════════════════════════════ */
+const MOODS=[
+  {key:'good',    emoji:'😊', label:'좋아요',      bg:'var(--green-l)'},
+  {key:'tired',   emoji:'😴', label:'피곤해요',    bg:'var(--blue-l)'},
+  {key:'excited', emoji:'💕', label:'설레요',      bg:'var(--pink-l)'},
+  {key:'complex', emoji:'😤', label:'복잡해요',    bg:'var(--peach-l)'},
+  {key:'miss',    emoji:'🥺', label:'보고싶어요',  bg:'var(--purple-l)'},
+  {key:'energy',  emoji:'✨', label:'에너지 넘쳐', bg:'var(--yellow-l)'},
+];
+
+function checkDailyMood(){
+  if(!S.cid||!S.uid)return;
+  const today=fmtDate(new Date());
+  const saved=localStorage.getItem(`mood_${S.cid}_${today}_${S.uid}`);
+  if(saved){
+    const el=document.getElementById('my-mood-badge');
+    if(el)el.textContent=saved;
+  } else {
+    setTimeout(openMoodSheet,700);
+  }
+  loadPartnerMood(today);
+}
+
+function openMoodSheet(){
+  const today=fmtDate(new Date());
+  const wk=['일','월','화','수','목','금','토'];
+  const d=new Date(today+'T12:00:00');
+  document.getElementById('mood-date-txt').textContent=
+    `${d.getMonth()+1}월 ${d.getDate()}일 ${wk[d.getDay()]}요일`;
+  document.getElementById('mood-grid').innerHTML=MOODS.map(m=>`
+    <button class="mood-btn" onclick="selectMood('${m.key}','${m.emoji}','${m.label}',this)" style="--mood-bg:${m.bg}">
+      <span class="mood-emoji-big">${m.emoji}</span>
+      <span class="mood-label-txt">${m.label}</span>
+    </button>`).join('');
+  document.getElementById('mood-sheet').classList.add('open');
+  document.getElementById('mood-overlay').classList.add('open');
+}
+
+function closeMoodSheet(){
+  document.getElementById('mood-sheet').classList.remove('open');
+  document.getElementById('mood-overlay').classList.remove('open');
+}
+
+async function selectMood(key,emoji,label,btn){
+  btn.classList.add('selected');
+  const today=fmtDate(new Date());
+  localStorage.setItem(`mood_${S.cid}_${today}_${S.uid}`,emoji);
+  const el=document.getElementById('my-mood-badge');
+  if(el){el.textContent=emoji;}
+  if(S.uid&&S.cid){
+    db.collection('moods').doc(`${S.cid}_${today}_${S.uid}`).set({
+      uid:S.uid,coupleId:S.cid,date:today,
+      moodKey:key,moodEmoji:emoji,moodLabel:label,
+      createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }
+  setTimeout(closeMoodSheet,380);
+}
+
+async function loadPartnerMood(today){
+  if(!S.partnerUid||!S.cid)return;
+  // 로컬 먼저 확인
+  const cached=localStorage.getItem(`mood_${S.cid}_${today}_${S.partnerUid}`);
+  if(cached){const el=document.getElementById('partner-mood-badge');if(el)el.textContent=cached;return;}
+  // Firestore에서 가져오기
+  try{
+    const doc=await db.collection('moods').doc(`${S.cid}_${today}_${S.partnerUid}`).get();
+    if(doc.exists){
+      const emoji=doc.data().moodEmoji;
+      localStorage.setItem(`mood_${S.cid}_${today}_${S.partnerUid}`,emoji);
+      const el=document.getElementById('partner-mood-badge');
+      if(el)el.textContent=emoji;
+    }
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════════════════════
+   성향 퀴즈
+══════════════════════════════════════════════════════ */
+const QUIZ_Q=[
+  {
+    emoji:'💝',q:'좋아하는 사람이 생기면\n어떻게 행동해요?',
+    opts:[
+      {e:'💬',t:'먼저 다가가서\n직접 표현해',s:{passionate:2,rational:1}},
+      {e:'🌸',t:'분위기 보면서\n천천히 다가가',s:{romantic:2,attentive:1}},
+      {e:'🌙',t:'상대가 먼저\n다가오길 기다려',s:{independent:2,stable:1}},
+    ]
+  },
+  {
+    emoji:'😤',q:'연인이랑 싸웠을 때\n나는?',
+    opts:[
+      {e:'🗣️',t:'바로 대화로\n해결하고 싶어',s:{rational:2,passionate:1}},
+      {e:'📝',t:'혼자 감정 정리 후\n이야기해',s:{attentive:2,stable:1}},
+      {e:'🌊',t:'시간 지나면\n자연스럽게 풀려',s:{independent:2,romantic:1}},
+    ]
+  },
+  {
+    emoji:'📱',q:'연인에게\n연락하는 편은?',
+    opts:[
+      {e:'💌',t:'생각날 때마다\n자주 연락해',s:{passionate:2,romantic:1}},
+      {e:'☎️',t:'중요할 때만\n적당히',s:{stable:2,rational:1}},
+      {e:'🔔',t:'연락 오면\n잘 받는 편',s:{independent:2,attentive:1}},
+    ]
+  },
+  {
+    emoji:'🗓️',q:'데이트 계획\n어떻게 세워요?',
+    opts:[
+      {e:'📋',t:'미리 꼼꼼하게\n계획 세워',s:{stable:2,rational:1}},
+      {e:'🎲',t:'큰 틀만 잡고\n즉흥적으로',s:{romantic:2,passionate:1}},
+      {e:'🚶',t:'그냥 만나서\n같이 정해',s:{independent:2,attentive:1}},
+    ]
+  },
+  {
+    emoji:'💫',q:'연애에서\n가장 중요한 건?',
+    opts:[
+      {e:'🌹',t:'설레임과\n감성',s:{romantic:3}},
+      {e:'🏡',t:'믿음과\n안정감',s:{stable:3}},
+      {e:'🦋',t:'자유와\n나만의 공간',s:{independent:3}},
+      {e:'📈',t:'함께\n성장하기',s:{attentive:2,rational:1}},
+    ]
+  }
+];
+
+const LOVE_TYPES={
+  romantic:   {label:'낭만 사랑꾼',   emoji:'🌹', color:'var(--pink)',   bg:'var(--pink-l)',   desc:'감성이 풍부하고 설렘을 소중하게 여겨요.\n작은 것에도 로맨틱한 의미를 찾는 타입이에요.'},
+  passionate: {label:'열정 사랑꾼',   emoji:'🔥', color:'var(--peach)',  bg:'var(--peach-l)', desc:'사랑에 적극적이고 표현이 넘쳐요.\n좋아하면 먼저 다가가고 온 마음을 쏟는 타입이에요.'},
+  stable:     {label:'든든한 사랑꾼', emoji:'🏡', color:'var(--blue)',   bg:'var(--blue-l)',  desc:'신뢰와 안정감을 가장 중요하게 생각해요.\n꾸준하고 믿음직한 파트너예요.'},
+  independent:{label:'자유로운 사랑꾼',emoji:'🦋', color:'var(--mint)',   bg:'var(--mint-l)',  desc:'서로의 공간을 존중하는 독립적인 연애를 해요.\n구속보다 신뢰로 이어지는 관계를 원해요.'},
+  attentive:  {label:'섬세한 사랑꾼', emoji:'🌸', color:'var(--purple)', bg:'var(--purple-l)',desc:'상대방의 감정을 누구보다 잘 살펴요.\n말하지 않아도 알아채는 배려심 깊은 타입이에요.'},
+  rational:   {label:'냉정한 사랑꾼', emoji:'💎', color:'var(--blue)',   bg:'var(--blue-l)',  desc:'감정보다 이성적으로 관계를 풀어나가요.\n솔직하고 직접적인 소통을 가장 중요하게 여겨요.'},
+};
+
+let _qIdx=0, _qScores={}, _qAnswers=[];
+
+function startQuiz(){
+  _qIdx=0; _qScores={romantic:0,passionate:0,stable:0,independent:0,attentive:0,rational:0}; _qAnswers=[];
+  goScreen('screen-quiz');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const total=QUIZ_Q.length;
+  const pct=((_qIdx)/total)*100;
+  document.getElementById('quiz-prog-fill').style.width=pct+'%';
+  document.getElementById('quiz-prog-label').textContent=`${_qIdx+1} / ${total}`;
+  document.getElementById('quiz-back-btn').style.opacity=_qIdx===0?'0':'1';
+  document.getElementById('quiz-back-btn').style.pointerEvents=_qIdx===0?'none':'auto';
+
+  const q=QUIZ_Q[_qIdx];
+  const body=document.getElementById('quiz-body');
+  body.innerHTML=`
+    <div class="q-in">
+      <span class="quiz-emoji-big">${q.emoji}</span>
+      <div class="quiz-question">${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o,i)=>`
+          <button class="quiz-option" onclick="selectOption(${i})">
+            <span class="quiz-opt-emoji">${o.e}</span>
+            <span class="quiz-opt-text">${o.t}</span>
+          </button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function selectOption(i){
+  const opts=document.querySelectorAll('.quiz-option');
+  opts[i].classList.add('selected');
+  const o=QUIZ_Q[_qIdx].opts[i];
+  _qAnswers.push({q:_qIdx,a:i});
+  Object.entries(o.s).forEach(([k,v])=>_qScores[k]=((_qScores[k]||0)+v));
+  setTimeout(()=>{
+    if(_qIdx<QUIZ_Q.length-1){
+      _qIdx++;
+      renderQuestion();
+    }else{
+      showQuizResult();
+    }
+  },280);
+}
+
+function quizBack(){
+  if(_qIdx===0)return;
+  // 마지막 답변 점수 취소
+  const last=_qAnswers.pop();
+  if(last){
+    const o=QUIZ_Q[last.q].opts[last.a];
+    Object.entries(o.s).forEach(([k,v])=>_qScores[k]=Math.max(0,(_qScores[k]||0)-v));
+  }
+  _qIdx--;
+  renderQuestion();
+}
+
+function calcLoveType(){
+  return Object.entries(_qScores).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+async function showQuizResult(){
+  const typeKey=calcLoveType();
+  const type=LOVE_TYPES[typeKey];
+  // Firestore + localStorage 저장
+  const data={loveTypeKey:typeKey,loveTypeLabel:type.label,loveTypeEmoji:type.emoji,quizAnswers:_qAnswers,quizDone:true,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(S.uid) db.collection('users').doc(S.uid).set(data,{merge:true});
+  S.profile={...S.profile,...data};
+  localStorage.setItem('kemi_love_type',typeKey);
+  localStorage.setItem('kemi_love_type_label',type.label);
+  localStorage.setItem('kemi_love_type_emoji',type.emoji);
+
+  document.getElementById('quiz-top') // hide progress
+  document.getElementById('quiz-prog-fill').style.width='100%';
+  document.getElementById('quiz-back-btn').style.opacity='0';
+  document.getElementById('quiz-prog-label').textContent='완료!';
+
+  document.getElementById('quiz-body').innerHTML=`
+    <div class="quiz-result-wrap q-in">
+      <div class="quiz-result-emoji">${type.emoji}</div>
+      <div class="quiz-result-type" style="color:${type.color}">${type.label}</div>
+      <div class="quiz-result-name">${S.myName}님은</div>
+      <div class="quiz-result-desc">${type.desc}</div>
+      <button class="btn btn-yellow btn-full" onclick="afterQuiz()" style="font-size:15px;padding:15px">
+        KEMI 시작하기 →
+      </button>
+    </div>`;
+}
+
+function afterQuiz(){
+  document.getElementById('nav-bar').classList.add('visible');
+  loadData();
+  goNav('dashboard');
+}
+
+/* ══════════════════════════════════════════════════════
    초대 코드 / 커플 연결
 ══════════════════════════════════════════════════════ */
 function generateInviteCode(){
@@ -1867,7 +2303,7 @@ async function onCoupleConnected(cid){
   document.getElementById('invite-wrap').innerHTML=`
     <div style="text-align:center;padding:20px 0">
       <div style="font-size:72px;margin-bottom:16px">🎉</div>
-      <h2 style="font-family:'Nunito',sans-serif;font-weight:900;font-size:28px;margin-bottom:10px">연결됐어요!</h2>
+      <h2 style="font-family:var(--sans);font-weight:800;font-size:28px;margin-bottom:10px">연결됐어요!</h2>
       <p style="font-size:16px;color:var(--muted);margin-bottom:36px">${S.myName} 💕 ${S.partnerName}</p>
       <button class="btn btn-yellow btn-full" onclick="proceedAfterCouple()" style="font-size:16px;padding:16px">KEMI 시작하기 →</button>
     </div>`;
@@ -1875,9 +2311,20 @@ async function onCoupleConnected(cid){
 
 async function proceedAfterCouple(){
   if(_inviteUnsub){_inviteUnsub();_inviteUnsub=null;}
-  document.getElementById('nav-bar').classList.add('visible');
-  loadData();
-  goNav('dashboard');
+  // 닉네임 설정 → 퀴즈 순서
+  goScreen('screen-nickname');
+  const input=document.getElementById('nickname-input');
+  input.value=S.myName||'';
+  input.focus();
+}
+
+async function saveNickname(){
+  const val=document.getElementById('nickname-input').value.trim();
+  if(!val){document.getElementById('nickname-input').focus();return;}
+  S.myName=val;
+  localStorage.setItem('kemi_name',val);
+  if(S.uid) await db.collection('users').doc(S.uid).set({name:val,nickname:val},{merge:true});
+  startQuiz();
 }
 
 /* ── Google 로그인 ── */
