@@ -1503,8 +1503,6 @@ function initDashboard(){
   document.getElementById('my-avatar-circle').textContent=av;
   document.getElementById('my-name-card').textContent=nm;
   document.getElementById('my-type-card').textContent=loveLabel?`${loveEmoji} ${loveLabel}`:'';
-  document.getElementById('couple-dday-card').textContent=`D+${diff}`;
-
   // 파트너 정보
   const partnerLoveLabel=S.partnerProfile?.loveTypeLabel||'';
   const partnerLoveEmoji=S.partnerProfile?.loveTypeEmoji||'';
@@ -1517,6 +1515,7 @@ function initDashboard(){
 
   const start=new Date(S.startDate||CFG.START_DATE);
   const diff=Math.floor((now-start)/86400000)+1;
+  document.getElementById('couple-dday-card').textContent=`D+${diff}`;
   document.getElementById('dday-num').textContent=`D+${diff}`;
 
   // Animated ring arcs
