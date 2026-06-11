@@ -1063,7 +1063,7 @@ textarea.input{resize:vertical;min-height:80px}
       <div class="couple-avatar-circle" id="my-avatar-circle" style="background:var(--yellow-l)">💕</div>
       <div class="couple-name-txt" id="my-name-card">나</div>
       <div class="couple-type-txt" id="my-type-card"></div>
-      <span class="couple-mood-badge" id="my-mood-badge"></span>
+      <span class="couple-mood-badge" id="my-mood-badge" onclick="openMoodSheet()" style="cursor:pointer" title="기분 변경"></span>
     </div>
     <div class="couple-center">
       <div class="couple-heart-icon">💕</div>
@@ -1430,10 +1430,15 @@ async function onLogin(){
       localStorage.setItem('kemi_start_date',S.startDate);
     }
   }
-  // 파트너 프로필 (러브타입 포함) 로드
+  // 파트너 프로필 최신화 (이름 + 러브타입)
   if(S.partnerUid){
     const pd=await db.collection('users').doc(S.partnerUid).get();
-    S.partnerProfile=pd.exists?pd.data():{};
+    if(pd.exists){
+      S.partnerProfile=pd.data();
+      const freshName=pd.data().nickname||pd.data().name||S.partnerName;
+      S.partnerName=freshName;
+      localStorage.setItem('kemi_partner_name',freshName);
+    }
   }
   // 퀴즈 안 했으면 퀴즈로 (localStorage 기준)
   if(!localStorage.getItem('kemi_love_type')){
